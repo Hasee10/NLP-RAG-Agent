@@ -1,0 +1,749 @@
+================================================================================
+                        NLP ASSIGNMENT #3 - OUTPUT SUMMARY
+================================================================================
+Execution Date: April 27, 2026
+Device: CUDA (GPU Available)
+================================================================================
+
+
+================================================================================
+                             TASK A: ENCODER TRAINING
+================================================================================
+
+Epoch 01 | Train Loss 1.7896 | Val Loss 1.7032 | Val F1-Sent 0.3405 | Val F1-Len 0.4325
+Epoch 02 | Train Loss 1.6557 | Val Loss 1.5748 | Val F1-Sent 0.3389 | Val F1-Len 0.6212
+Epoch 03 | Train Loss 1.5662 | Val Loss 1.4982 | Val F1-Sent 0.3466 | Val F1-Len 0.7197
+Epoch 04 | Train Loss 1.5043 | Val Loss 1.4402 | Val F1-Sent 0.3514 | Val F1-Len 0.7835
+Epoch 05 | Train Loss 1.4543 | Val Loss 1.3927 | Val F1-Sent 0.3550 | Val F1-Len 0.8248
+Epoch 06 | Train Loss 1.4158 | Val Loss 1.3537 | Val F1-Sent 0.3592 | Val F1-Len 0.8477
+Epoch 07 | Train Loss 1.3805 | Val Loss 1.3216 | Val F1-Sent 0.3665 | Val F1-Len 0.8714
+Epoch 08 | Train Loss 1.3511 | Val Loss 1.2940 | Val F1-Sent 0.3667 | Val F1-Len 0.8855
+Epoch 09 | Train Loss 1.3259 | Val Loss 1.2707 | Val F1-Sent 0.3724 | Val F1-Len 0.8979
+Epoch 10 | Train Loss 1.3012 | Val Loss 1.2514 | Val F1-Sent 0.3722 | Val F1-Len 0.9080
+Epoch 11 | Train Loss 1.2809 | Val Loss 1.2347 | Val F1-Sent 0.3767 | Val F1-Len 0.9168
+Epoch 12 | Train Loss 1.2649 | Val Loss 1.2200 | Val F1-Sent 0.3752 | Val F1-Len 0.9228
+Epoch 13 | Train Loss 1.2543 | Val Loss 1.2075 | Val F1-Sent 0.3764 | Val F1-Len 0.9287
+Epoch 14 | Train Loss 1.2386 | Val Loss 1.1966 | Val F1-Sent 0.3787 | Val F1-Len 0.9331
+Epoch 15 | Train Loss 1.2282 | Val Loss 1.1873 | Val F1-Sent 0.3818 | Val F1-Len 0.9372
+
+Sentiment Classification Report (Test):
+              precision    recall  f1-score   support
+
+    Negative       0.26      0.42      0.32      1225
+     Neutral       0.11      0.33      0.17       515
+    Positive       0.82      0.50      0.62      4516
+
+    accuracy                           0.47      6256
+   macro avg       0.40      0.42      0.37      6256
+weighted avg       0.65      0.47      0.52      6256
+
+Length Label Classification Report (Test):
+              precision    recall  f1-score   support
+
+       Short       0.95      0.92      0.93      1977
+      Medium       0.91      0.91      0.91      2296
+        Long       0.95      0.98      0.96      1983
+
+    accuracy                           0.93      6256
+   macro avg       0.94      0.94      0.94      6256
+weighted avg       0.93      0.93      0.93      6256
+
+Saved 29192 training embeddings -> results/train_embeddings.npy
+Encoder training complete. All outputs saved to results/
+
+================================================================================
+                           TASK B: RETRIEVAL & EMBEDDINGS
+================================================================================
+
+Retrieval quality analysis on 10 test samples:
+================================================================================
+
+Query [Negative]: This is the worst program I have ever used!! Very user unfriendly, won't upload pictures, etc. Don't waste your money....
+  [Y] [Negative] sim=0.9931: this head set complitel sucks do not waste your money on this junk I bought 2 an...
+  [Y] [Negative] sim=0.9923: this does not work in a xp ora vista i have a window 7 ido like the just make it...
+  [N] [Positive] sim=0.9918: This is one of the most useful and wonderful things I have ever gotten for mysel...
+  [N] [Positive] sim=0.9911: This game is a master piece ! Nothing more to say buy it. play it. enjoy it . An...
+  [Y] [Negative] sim=0.9909: This game is a waste of money don't bother buying it! To many bugs and bosses ar...
+
+Query [Positive]: I am low tech and I bought this as a gift for a child who wants to draw online. It was overkill. I imagine it is more ap...
+  [N] [Negative] sim=0.9982: I ordered this game as a gift for christmas...when it arrived it was in french! ...
+  [Y] [Positive] sim=0.9979: I love this stuff. I purchased it last February at a local spa. Gives me nice li...
+  [Y] [Positive] sim=0.9977: I admit to being age 65 and love fairy tales, Candyland, etc., which I played wi...
+  [Y] [Positive] sim=0.9975: I bought this game played it for an hour and tried to save when i turned my game...
+  [N] [Negative] sim=0.9975: I purchased this in July 2011 when my Norton subscription expired. I thought it ...
+
+Query [Positive]: I have very sensitive skin that is prone to breakouts and weird rashes. My dermatologist recommended this for my face. I...
+  [N] [Negative] sim=0.9990: I have been using One Care now for 6 months and it has been nothing but trouble....
+  [Y] [Positive] sim=0.9990: I am not a review writer, but this product impressed me so much that I had to wr...
+  [Y] [Positive] sim=0.9990: I love this stuff and it's now my go-to hand moisturizer SPF. This bottle is TIN...
+  [Y] [Positive] sim=0.9989: I buy lots online but rarely review anything so that should tell you something a...
+  [Y] [Positive] sim=0.9989: I purchased this product after a facial at a local spa, not through Amazon . I l...
+
+Query [Positive]: First i,ve played all the halo series, odst is a fine stand alone unit that is a great campain mode where is shines is i...
+  [Y] [Positive] sim=0.9962: First off I love it! The my playroom game that comes with PS4 is so fun while us...
+  [N] [Neutral] sim=0.9961: First of all, know what you're buying. Androids can't get viruses because their ...
+  [Y] [Positive] sim=0.9959: First of all, I requested 7-10 day shipping for this mouse, and I received it in...
+  [N] [Negative] sim=0.9958: First this does not work at all for the PS3 controller. It falls right off once ...
+  [Y] [Positive] sim=0.9954: First off using this is real easy, but if you want one of these make sure to get...
+
+Query [Positive]: I purchased this for my granddaughter. She prefers "western riding" games, but enjoyed this game. Great pricing, good qu...
+  [Y] [Positive] sim=0.9947: I love Morroccanoil, use it every day. It's not greasy at all and keeps my hair ...
+  [N] [Neutral] sim=0.9944: I haven't really noticed much of a difference in my hair at this point. I have b...
+  [Y] [Positive] sim=0.9943: I have a spare WD laptop drive, and this enclosure allows me to upgrade my xbox ...
+  [Y] [Positive] sim=0.9942: I love this stuff. Best foundation I have ever used. Very natural after misting ...
+  [Y] [Positive] sim=0.9940: I have Windows Vista 2007. It downloaded quickly and easily and works great. Gre...
+
+Query [Positive]: Awesome game, fun for all the family...
+  [Y] [Positive] sim=0.9816: Awesome magazine. I can't wait for each issue....
+  [Y] [Positive] sim=0.9809: Awesome mouse for a great price! I use it for heavy gaming....
+  [Y] [Positive] sim=0.9808: awesome all I need for my home DJ ing...
+  [Y] [Positive] sim=0.9806: Awesome product. Controls dry frizzy hair for a smooth blowout!...
+  [Y] [Positive] sim=0.9790: awesome game for a 6 year old...
+
+Query [Negative]: I deeply regret nbsp Microsoft Office Professional 2007 UPGRADE upgrade. The new ribbon means that I have to completely ...
+  [N] [Positive] sim=0.9991: I have seen some fairly mediocre reviews on this based on both the software invo...
+  [N] [Positive] sim=0.9991: I have used Quicken since MS Money went away. I really like the ease, protection...
+  [Y] [Negative] sim=0.9990: I bought as new in March this year 2011 and paid Amazon direct, an HTC Z Desire ...
+  [N] [Positive] sim=0.9990: I got this mouse in 2007, and it finally "passed away" in mid 2012 when the left...
+  [N] [Positive] sim=0.9990: I hear people say all the time that despite Deus Ex being such a great game, Hal...
+
+Query [Positive]: Use this all the time....
+  [Y] [Positive] sim=0.9718: Use it like it. I would rather read a pyshical book though....
+  [Y] [Positive] sim=0.9681: use to clearn catch and histories to clean up and get space...
+  [Y] [Positive] sim=0.9674: Use it in the shower for face cleaning. Works about as well as a Dove bar....
+  [Y] [Positive] sim=0.9665: Use this version on several PC's. No problem. No need for extra expense to upgra...
+  [Y] [Positive] sim=0.9597: Use Daily Pros Heavy base, 12 buttons, slider throttle. Cons Can't think of any....
+
+Query [Positive]: This was a good deal for the money. Clarity kind of goes with the connection. Most of the time it's crystal but every on...
+  [Y] [Positive] sim=0.9964: this game Shinovi Versus is a Battle of the Boobs.all-female-cast fighting games...
+  [N] [Negative] sim=0.9964: This product is very difficult to use and I find help not useful either. I would...
+  [Y] [Positive] sim=0.9963: This review it's late, but the headphones have been very reliable and have worke...
+  [Y] [Positive] sim=0.9962: This is my second safety razor. Its definitely a step up from the one that came ...
+  [N] [Negative] sim=0.9961: This item was sent with the pump already attached. It had popped up and pumped s...
+
+Query [Negative]: Graphics look pixelated at 1080p. In fact Resistance 1 graphics on 1080p look excellent - why comprimise on the visuals ...
+  [N] [Neutral] sim=0.9990: Graphics - they are absolutely amazing, this is the first game where sometimes I...
+  [Y] [Negative] sim=0.9970: Graphics 9 10 Sound 9 10 Fun 3 10 Gameplay 2 10 Pros Beautiful graphics and char...
+  [N] [Neutral] sim=0.9756: Graphics are beautiful. But you're sitting there pointing out the graphics like ...
+  [N] [Neutral] sim=0.9715: Graphics are better for this game. But it's the same game done for Wii over and ...
+  [N] [Positive] sim=0.9567: Graphics are amazing and very playable at high rez. even on a Ti4200-128. Sound ...
+
+Precision@1: 0.5650
+Precision@3: 0.5783
+Precision@5: 0.5910
+Precision@10: 0.5830
+
+Retrieving context for test samples...
+  Retrieved context for 500/6256 test samples...
+  Retrieved context for 1000/6256 test samples...
+  Retrieved context for 1500/6256 test samples...
+  Retrieved context for 2000/6256 test samples...
+  Retrieved context for 2500/6256 test samples...
+  Retrieved context for 3000/6256 test samples...
+  Retrieved context for 3500/6256 test samples...
+  Retrieved context for 4000/6256 test samples...
+  Retrieved context for 4500/6256 test samples...
+  Retrieved context for 5000/6256 test samples...
+  Retrieved context for 5500/6256 test samples...
+  Retrieved context for 6000/6256 test samples...
+
+Saved 6256 test contexts -> results/test_contexts.csv
+Retrieval module complete.
+
+
+================================================================================
+                        TASK C: DECODER LM TRAINING
+================================================================================
+
+Starting Task C: Decoder LM Training
+Model created on device: cuda
+Vocabulary size: 33482
+  [Train] batch 100/3649  loss=6.4010
+  [Train] batch 200/3649  loss=5.4146
+  [Train] batch 300/3649  loss=5.0200
+  [Train] batch 400/3649  loss=4.7871
+  [Train] batch 500/3649  loss=4.6205
+  [Train] batch 600/3649  loss=4.4849
+  [Train] batch 700/3649  loss=4.3730
+  [Train] batch 800/3649  loss=4.2802
+  [Train] batch 900/3649  loss=4.1906
+  [Train] batch 1000/3649  loss=4.1064
+  [Train] batch 1100/3649  loss=4.0359
+  [Train] batch 1200/3649  loss=3.9686
+  [Train] batch 1300/3649  loss=3.8965
+  [Train] batch 1400/3649  loss=3.8284
+  [Train] batch 1500/3649  loss=3.7624
+  [Train] batch 1600/3649  loss=3.7012
+  [Train] batch 1700/3649  loss=3.6435
+  [Train] batch 1800/3649  loss=3.5856
+  [Train] batch 1900/3649  loss=3.5304
+  [Train] batch 2000/3649  loss=3.4784
+  [Train] batch 2100/3649  loss=3.4254
+  [Train] batch 2200/3649  loss=3.3736
+  [Train] batch 2300/3649  loss=3.3245
+  [Train] batch 2400/3649  loss=3.2758
+  [Train] batch 2500/3649  loss=3.2289
+  [Train] batch 2600/3649  loss=3.1836
+  [Train] batch 2700/3649  loss=3.1392
+  [Train] batch 2800/3649  loss=3.0955
+  [Train] batch 2900/3649  loss=3.0551
+  [Train] batch 3000/3649  loss=3.0155
+  [Train] batch 3100/3649  loss=2.9766
+  [Train] batch 3200/3649  loss=2.9390
+  [Train] batch 3300/3649  loss=2.9039
+  [Train] batch 3400/3649  loss=2.8684
+  [Train] batch 3500/3649  loss=2.8358
+  [Train] batch 3600/3649  loss=2.8021
+  [Val] batch 100/782  loss=1.3120
+  [Val] batch 200/782  loss=1.3149
+  [Val] batch 300/782  loss=1.3034
+  [Val] batch 400/782  loss=1.3085
+  [Val] batch 500/782  loss=1.3022
+  [Val] batch 600/782  loss=1.2917
+  [Val] batch 700/782  loss=1.2957
+Epoch 01 | Train Loss 2.7872 | Val Loss 1.2950
+  [Train] batch 100/3649  loss=1.5520
+  [Train] batch 200/3649  loss=1.5559
+  [Train] batch 300/3649  loss=1.5403
+  [Train] batch 400/3649  loss=1.5245
+  [Train] batch 500/3649  loss=1.5108
+  [Train] batch 600/3649  loss=1.4960
+  [Train] batch 700/3649  loss=1.4846
+  [Train] batch 800/3649  loss=1.4750
+  [Train] batch 900/3649  loss=1.4681
+  [Train] batch 1000/3649  loss=1.4618
+  [Train] batch 1100/3649  loss=1.4556
+  [Train] batch 1200/3649  loss=1.4471
+  [Train] batch 1300/3649  loss=1.4415
+  [Train] batch 1400/3649  loss=1.4361
+  [Train] batch 1500/3649  loss=1.4325
+  [Train] batch 1600/3649  loss=1.4236
+  [Train] batch 1700/3649  loss=1.4159
+  [Train] batch 1800/3649  loss=1.4098
+  [Train] batch 1900/3649  loss=1.4063
+  [Train] batch 2000/3649  loss=1.3997
+  [Train] batch 2100/3649  loss=1.3944
+  [Train] batch 2200/3649  loss=1.3906
+  [Train] batch 2300/3649  loss=1.3834
+  [Train] batch 2400/3649  loss=1.3775
+  [Train] batch 2500/3649  loss=1.3731
+  [Train] batch 2600/3649  loss=1.3675
+  [Train] batch 2700/3649  loss=1.3609
+  [Train] batch 2800/3649  loss=1.3552
+  [Train] batch 2900/3649  loss=1.3492
+  [Train] batch 3000/3649  loss=1.3427
+  [Train] batch 3100/3649  loss=1.3362
+  [Train] batch 3200/3649  loss=1.3314
+  [Train] batch 3300/3649  loss=1.3269
+  [Train] batch 3400/3649  loss=1.3216
+  [Train] batch 3500/3649  loss=1.3172
+  [Train] batch 3600/3649  loss=1.3114
+  [Val] batch 100/782  loss=0.9308
+  [Val] batch 200/782  loss=0.9367
+  [Val] batch 300/782  loss=0.9252
+  [Val] batch 400/782  loss=0.9260
+  [Val] batch 500/782  loss=0.9200
+  [Val] batch 600/782  loss=0.9110
+  [Val] batch 700/782  loss=0.9159
+Epoch 02 | Train Loss 1.3086 | Val Loss 0.9149
+  [Train] batch 100/3649  loss=1.0191
+  [Train] batch 200/3649  loss=1.0467
+  [Train] batch 300/3649  loss=1.0621
+  [Train] batch 400/3649  loss=1.0714
+  [Train] batch 500/3649  loss=1.0835
+  [Train] batch 600/3649  loss=1.0868
+  [Train] batch 700/3649  loss=1.0885
+  [Train] batch 800/3649  loss=1.0820
+  [Train] batch 900/3649  loss=1.0786
+  [Train] batch 1000/3649  loss=1.0736
+  [Train] batch 1100/3649  loss=1.0728
+  [Train] batch 1200/3649  loss=1.0734
+  [Train] batch 1300/3649  loss=1.0718
+  [Train] batch 1400/3649  loss=1.0742
+  [Train] batch 1500/3649  loss=1.0749
+  [Train] batch 1600/3649  loss=1.0754
+  [Train] batch 1700/3649  loss=1.0728
+  [Train] batch 1800/3649  loss=1.0722
+  [Train] batch 1900/3649  loss=1.0711
+  [Train] batch 2000/3649  loss=1.0725
+  [Train] batch 2100/3649  loss=1.0695
+  [Train] batch 2200/3649  loss=1.0707
+  [Train] batch 2300/3649  loss=1.0689
+  [Train] batch 2400/3649  loss=1.0674
+  [Train] batch 2500/3649  loss=1.0673
+  [Train] batch 2600/3649  loss=1.0650
+  [Train] batch 2700/3649  loss=1.0641
+  [Train] batch 2800/3649  loss=1.0644
+  [Train] batch 2900/3649  loss=1.0638
+  [Train] batch 3000/3649  loss=1.0626
+  [Train] batch 3100/3649  loss=1.0619
+  [Train] batch 3200/3649  loss=1.0623
+  [Train] batch 3300/3649  loss=1.0604
+  [Train] batch 3400/3649  loss=1.0590
+  [Train] batch 3500/3649  loss=1.0577
+  [Train] batch 3600/3649  loss=1.0572
+  [Val] batch 100/782  loss=0.8474
+  [Val] batch 200/782  loss=0.8486
+  [Val] batch 300/782  loss=0.8369
+  [Val] batch 400/782  loss=0.8363
+  [Val] batch 500/782  loss=0.8301
+  [Val] batch 600/782  loss=0.8206
+  [Val] batch 700/782  loss=0.8257
+Epoch 03 | Train Loss 1.0569 | Val Loss 0.8237
+  [Train] batch 100/3649  loss=0.9716
+  [Train] batch 200/3649  loss=0.9622
+  [Train] batch 300/3649  loss=0.9704
+  [Train] batch 400/3649  loss=0.9699
+  [Train] batch 500/3649  loss=0.9622
+  [Train] batch 600/3649  loss=0.9651
+  [Train] batch 700/3649  loss=0.9661
+  [Train] batch 800/3649  loss=0.9573
+  [Train] batch 900/3649  loss=0.9584
+  [Train] batch 1000/3649  loss=0.9568
+  [Train] batch 1100/3649  loss=0.9595
+  [Train] batch 1200/3649  loss=0.9625
+  [Train] batch 1300/3649  loss=0.9615
+  [Train] batch 1400/3649  loss=0.9630
+  [Train] batch 1500/3649  loss=0.9660
+  [Train] batch 1600/3649  loss=0.9663
+  [Train] batch 1700/3649  loss=0.9671
+  [Train] batch 1800/3649  loss=0.9665
+  [Train] batch 1900/3649  loss=0.9638
+  [Train] batch 2000/3649  loss=0.9609
+  [Train] batch 2100/3649  loss=0.9598
+  [Train] batch 2200/3649  loss=0.9602
+  [Train] batch 2300/3649  loss=0.9612
+  [Train] batch 2400/3649  loss=0.9619
+  [Train] batch 2500/3649  loss=0.9627
+  [Train] batch 2600/3649  loss=0.9623
+  [Train] batch 2700/3649  loss=0.9652
+  [Train] batch 2800/3649  loss=0.9646
+  [Train] batch 2900/3649  loss=0.9643
+  [Train] batch 3000/3649  loss=0.9646
+  [Train] batch 3100/3649  loss=0.9651
+  [Train] batch 3200/3649  loss=0.9640
+  [Train] batch 3300/3649  loss=0.9647
+  [Train] batch 3400/3649  loss=0.9656
+  [Train] batch 3500/3649  loss=0.9667
+  [Train] batch 3600/3649  loss=0.9658
+  [Val] batch 100/782  loss=0.8272
+  [Val] batch 200/782  loss=0.8199
+  [Val] batch 300/782  loss=0.8071
+  [Val] batch 400/782  loss=0.8072
+  [Val] batch 500/782  loss=0.8010
+  [Val] batch 600/782  loss=0.7922
+  [Val] batch 700/782  loss=0.7971
+Epoch 04 | Train Loss 0.9668 | Val Loss 0.7948
+  [Train] batch 100/3649  loss=0.9203
+  [Train] batch 200/3649  loss=0.9064
+  [Train] batch 300/3649  loss=0.9118
+  [Train] batch 400/3649  loss=0.9108
+  [Train] batch 500/3649  loss=0.9177
+  [Train] batch 600/3649  loss=0.9214
+  [Train] batch 700/3649  loss=0.9233
+  [Train] batch 800/3649  loss=0.9244
+  [Train] batch 900/3649  loss=0.9276
+  [Train] batch 1000/3649  loss=0.9295
+  [Train] batch 1100/3649  loss=0.9296
+  [Train] batch 1200/3649  loss=0.9295
+  [Train] batch 1300/3649  loss=0.9291
+  [Train] batch 1400/3649  loss=0.9347
+  [Train] batch 1500/3649  loss=0.9344
+  [Train] batch 1600/3649  loss=0.9362
+  [Train] batch 1700/3649  loss=0.9355
+  [Train] batch 1800/3649  loss=0.9376
+  [Train] batch 1900/3649  loss=0.9387
+  [Train] batch 2000/3649  loss=0.9408
+  [Train] batch 2100/3649  loss=0.9444
+  [Train] batch 2200/3649  loss=0.9448
+  [Train] batch 2300/3649  loss=0.9467
+  [Train] batch 2400/3649  loss=0.9489
+  [Train] batch 2500/3649  loss=0.9510
+  [Train] batch 2600/3649  loss=0.9517
+  [Train] batch 2700/3649  loss=0.9531
+  [Train] batch 2800/3649  loss=0.9566
+  [Train] batch 2900/3649  loss=0.9575
+  [Train] batch 3000/3649  loss=0.9589
+  [Train] batch 3100/3649  loss=0.9611
+  [Train] batch 3200/3649  loss=0.9616
+  [Train] batch 3300/3649  loss=0.9635
+  [Train] batch 3400/3649  loss=0.9646
+  [Train] batch 3500/3649  loss=0.9646
+  [Train] batch 3600/3649  loss=0.9658
+  [Val] batch 100/782  loss=0.8614
+  [Val] batch 200/782  loss=0.8572
+  [Val] batch 300/782  loss=0.8433
+  [Val] batch 400/782  loss=0.8442
+  [Val] batch 500/782  loss=0.8396
+  [Val] batch 600/782  loss=0.8308
+  [Val] batch 700/782  loss=0.8368
+Epoch 05 | Train Loss 0.9672 | Val Loss 0.8351
+  [Train] batch 100/3649  loss=0.9103
+  [Train] batch 200/3649  loss=0.9040
+  [Train] batch 300/3649  loss=0.9240
+  [Train] batch 400/3649  loss=0.9173
+  [Train] batch 500/3649  loss=0.9241
+  [Train] batch 600/3649  loss=0.9303
+  [Train] batch 700/3649  loss=0.9354
+  [Train] batch 800/3649  loss=0.9331
+  [Train] batch 900/3649  loss=0.9348
+  [Train] batch 1000/3649  loss=0.9409
+  [Train] batch 1100/3649  loss=0.9454
+  [Train] batch 1200/3649  loss=0.9475
+  [Train] batch 1300/3649  loss=0.9516
+  [Train] batch 1400/3649  loss=0.9542
+  [Train] batch 1500/3649  loss=0.9565
+  [Train] batch 1600/3649  loss=0.9559
+  [Train] batch 1700/3649  loss=0.9555
+  [Train] batch 1800/3649  loss=0.9593
+  [Train] batch 1900/3649  loss=0.9609
+  [Train] batch 2000/3649  loss=0.9613
+  [Train] batch 2100/3649  loss=0.9629
+  [Train] batch 2200/3649  loss=0.9629
+  [Train] batch 2300/3649  loss=0.9625
+  [Train] batch 2400/3649  loss=0.9622
+  [Train] batch 2500/3649  loss=0.9654
+  [Train] batch 2600/3649  loss=0.9639
+  [Train] batch 2700/3649  loss=0.9645
+  [Train] batch 2800/3649  loss=0.9647
+  [Train] batch 2900/3649  loss=0.9664
+  [Train] batch 3000/3649  loss=0.9660
+  [Train] batch 3100/3649  loss=0.9658
+  [Train] batch 3200/3649  loss=0.9662
+  [Train] batch 3300/3649  loss=0.9679
+  [Train] batch 3400/3649  loss=0.9700
+  [Train] batch 3500/3649  loss=0.9702
+  [Train] batch 3600/3649  loss=0.9728
+  [Val] batch 100/782  loss=0.8878
+  [Val] batch 200/782  loss=0.8824
+  [Val] batch 300/782  loss=0.8678
+  [Val] batch 400/782  loss=0.8669
+  [Val] batch 500/782  loss=0.8610
+  [Val] batch 600/782  loss=0.8520
+  [Val] batch 700/782  loss=0.8577
+Epoch 06 | Train Loss 0.9731 | Val Loss 0.8550
+  [Train] batch 100/3649  loss=0.9879
+  [Train] batch 200/3649  loss=0.9515
+  [Train] batch 300/3649  loss=0.9647
+  [Train] batch 400/3649  loss=0.9684
+  [Train] batch 500/3649  loss=0.9685
+  [Train] batch 600/3649  loss=0.9658
+  [Train] batch 700/3649  loss=0.9690
+  [Train] batch 800/3649  loss=0.9688
+  [Train] batch 900/3649  loss=0.9746
+  [Train] batch 1000/3649  loss=0.9772
+  [Train] batch 1100/3649  loss=0.9750
+  [Train] batch 1200/3649  loss=0.9769
+  [Train] batch 1300/3649  loss=0.9750
+  [Train] batch 1400/3649  loss=0.9769
+  [Train] batch 1500/3649  loss=0.9765
+  [Train] batch 1600/3649  loss=0.9768
+  [Train] batch 1700/3649  loss=0.9783
+  [Train] batch 1800/3649  loss=0.9778
+  [Train] batch 1900/3649  loss=0.9777
+  [Train] batch 2000/3649  loss=0.9754
+  [Train] batch 2100/3649  loss=0.9750
+  [Train] batch 2200/3649  loss=0.9748
+  [Train] batch 2300/3649  loss=0.9748
+  [Train] batch 2400/3649  loss=0.9753
+  [Train] batch 2500/3649  loss=0.9749
+  [Train] batch 2600/3649  loss=0.9766
+  [Train] batch 2700/3649  loss=0.9772
+  [Train] batch 2800/3649  loss=0.9781
+  [Train] batch 2900/3649  loss=0.9769
+  [Train] batch 3000/3649  loss=0.9778
+  [Train] batch 3100/3649  loss=0.9772
+  [Train] batch 3200/3649  loss=0.9766
+  [Train] batch 3300/3649  loss=0.9775
+  [Train] batch 3400/3649  loss=0.9784
+  [Train] batch 3500/3649  loss=0.9776
+  [Train] batch 3600/3649  loss=0.9789
+  [Val] batch 100/782  loss=0.9069
+  [Val] batch 200/782  loss=0.9010
+  [Val] batch 300/782  loss=0.8886
+  [Val] batch 400/782  loss=0.8877
+  [Val] batch 500/782  loss=0.8817
+  [Val] batch 600/782  loss=0.8707
+  [Val] batch 700/782  loss=0.8772
+Epoch 07 | Train Loss 0.9790 | Val Loss 0.8751
+  [Train] batch 100/3649  loss=0.9923
+  [Train] batch 200/3649  loss=0.9649
+  [Train] batch 300/3649  loss=0.9604
+  [Train] batch 400/3649  loss=0.9748
+  [Train] batch 500/3649  loss=0.9771
+  [Train] batch 600/3649  loss=0.9796
+  [Train] batch 700/3649  loss=0.9804
+  [Train] batch 800/3649  loss=0.9781
+  [Train] batch 900/3649  loss=0.9839
+  [Train] batch 1000/3649  loss=0.9784
+  [Train] batch 1100/3649  loss=0.9742
+  [Train] batch 1200/3649  loss=0.9725
+  [Train] batch 1300/3649  loss=0.9732
+  [Train] batch 1400/3649  loss=0.9718
+  [Train] batch 1500/3649  loss=0.9734
+  [Train] batch 1600/3649  loss=0.9744
+  [Train] batch 1700/3649  loss=0.9718
+  [Train] batch 1800/3649  loss=0.9717
+  [Train] batch 1900/3649  loss=0.9748
+  [Train] batch 2000/3649  loss=0.9742
+  [Train] batch 2100/3649  loss=0.9780
+  [Train] batch 2200/3649  loss=0.9782
+  [Train] batch 2300/3649  loss=0.9790
+  [Train] batch 2400/3649  loss=0.9805
+  [Train] batch 2500/3649  loss=0.9827
+  [Train] batch 2600/3649  loss=0.9816
+  [Train] batch 2700/3649  loss=0.9822
+  [Train] batch 2800/3649  loss=0.9821
+  [Train] batch 2900/3649  loss=0.9840
+  [Train] batch 3000/3649  loss=0.9853
+  [Train] batch 3100/3649  loss=0.9841
+  [Train] batch 3200/3649  loss=0.9848
+  [Train] batch 3300/3649  loss=0.9858
+  [Train] batch 3400/3649  loss=0.9862
+  [Train] batch 3500/3649  loss=0.9875
+  [Train] batch 3600/3649  loss=0.9887
+  [Val] batch 100/782  loss=0.9252
+  [Val] batch 200/782  loss=0.9162
+  [Val] batch 300/782  loss=0.9033
+  [Val] batch 400/782  loss=0.9020
+  [Val] batch 500/782  loss=0.8969
+  [Val] batch 600/782  loss=0.8870
+  [Val] batch 700/782  loss=0.8927
+Epoch 08 | Train Loss 0.9889 | Val Loss 0.8901
+  [Train] batch 100/3649  loss=0.9376
+  [Train] batch 200/3649  loss=0.9516
+  [Train] batch 300/3649  loss=0.9596
+  [Train] batch 400/3649  loss=0.9700
+  [Train] batch 500/3649  loss=0.9650
+  [Train] batch 600/3649  loss=0.9645
+  [Train] batch 700/3649  loss=0.9741
+  [Train] batch 800/3649  loss=0.9809
+  [Train] batch 900/3649  loss=0.9811
+  [Train] batch 1000/3649  loss=0.9812
+  [Train] batch 1100/3649  loss=0.9829
+  [Train] batch 1200/3649  loss=0.9849
+  [Train] batch 1300/3649  loss=0.9852
+  [Train] batch 1400/3649  loss=0.9822
+  [Train] batch 1500/3649  loss=0.9790
+  [Train] batch 1600/3649  loss=0.9801
+  [Train] batch 1700/3649  loss=0.9825
+  [Train] batch 1800/3649  loss=0.9830
+  [Train] batch 1900/3649  loss=0.9857
+  [Train] batch 2000/3649  loss=0.9855
+  [Train] batch 2100/3649  loss=0.9848
+  [Train] batch 2200/3649  loss=0.9856
+  [Train] batch 2300/3649  loss=0.9857
+  [Train] batch 2400/3649  loss=0.9861
+  [Train] batch 2500/3649  loss=0.9858
+  [Train] batch 2600/3649  loss=0.9869
+  [Train] batch 2700/3649  loss=0.9869
+  [Train] batch 2800/3649  loss=0.9874
+  [Train] batch 2900/3649  loss=0.9873
+  [Train] batch 3000/3649  loss=0.9881
+  [Train] batch 3100/3649  loss=0.9879
+  [Train] batch 3200/3649  loss=0.9892
+  [Train] batch 3300/3649  loss=0.9909
+  [Train] batch 3400/3649  loss=0.9902
+  [Train] batch 3500/3649  loss=0.9908
+  [Train] batch 3600/3649  loss=0.9924
+  [Val] batch 100/782  loss=0.9419
+  [Val] batch 200/782  loss=0.9327
+  [Val] batch 300/782  loss=0.9174
+  [Val] batch 400/782  loss=0.9173
+  [Val] batch 500/782  loss=0.9115
+  [Val] batch 600/782  loss=0.9015
+  [Val] batch 700/782  loss=0.9073
+Epoch 09 | Train Loss 0.9924 | Val Loss 0.9048
+  [Train] batch 100/3649  loss=0.9740
+  [Train] batch 200/3649  loss=1.0059
+  [Train] batch 300/3649  loss=0.9985
+  [Train] batch 400/3649  loss=0.9847
+  [Train] batch 500/3649  loss=0.9827
+  [Train] batch 600/3649  loss=0.9794
+  [Train] batch 700/3649  loss=0.9803
+  [Train] batch 800/3649  loss=0.9780
+  [Train] batch 900/3649  loss=0.9794
+  [Train] batch 1000/3649  loss=0.9805
+  [Train] batch 1100/3649  loss=0.9775
+  [Train] batch 1200/3649  loss=0.9818
+  [Train] batch 1300/3649  loss=0.9855
+  [Train] batch 1400/3649  loss=0.9851
+  [Train] batch 1500/3649  loss=0.9884
+  [Train] batch 1600/3649  loss=0.9874
+  [Train] batch 1700/3649  loss=0.9889
+  [Train] batch 1800/3649  loss=0.9914
+  [Train] batch 1900/3649  loss=0.9912
+  [Train] batch 2000/3649  loss=0.9897
+  [Train] batch 2100/3649  loss=0.9904
+  [Train] batch 2200/3649  loss=0.9923
+  [Train] batch 2300/3649  loss=0.9943
+  [Train] batch 2400/3649  loss=0.9937
+  [Train] batch 2500/3649  loss=0.9950
+  [Train] batch 2600/3649  loss=0.9947
+  [Train] batch 2700/3649  loss=0.9953
+  [Train] batch 2800/3649  loss=0.9950
+  [Train] batch 2900/3649  loss=0.9949
+  [Train] batch 3000/3649  loss=0.9951
+  [Train] batch 3100/3649  loss=0.9949
+  [Train] batch 3200/3649  loss=0.9944
+  [Train] batch 3300/3649  loss=0.9961
+  [Train] batch 3400/3649  loss=0.9961
+  [Train] batch 3500/3649  loss=0.9951
+  [Train] batch 3600/3649  loss=0.9958
+  [Val] batch 100/782  loss=0.9551
+  [Val] batch 200/782  loss=0.9482
+  [Val] batch 300/782  loss=0.9314
+  [Val] batch 400/782  loss=0.9314
+  [Val] batch 500/782  loss=0.9253
+  [Val] batch 600/782  loss=0.9151
+  [Val] batch 700/782  loss=0.9211
+Epoch 10 | Train Loss 0.9955 | Val Loss 0.9186
+  [Train] batch 100/3649  loss=1.0264
+  [Train] batch 200/3649  loss=1.0119
+  [Train] batch 300/3649  loss=1.0135
+  [Train] batch 400/3649  loss=1.0057
+  [Train] batch 500/3649  loss=1.0023
+  [Train] batch 600/3649  loss=1.0031
+  [Train] batch 700/3649  loss=1.0033
+  [Train] batch 800/3649  loss=0.9994
+  [Train] batch 900/3649  loss=0.9966
+  [Train] batch 1000/3649  loss=1.0027
+  [Train] batch 1100/3649  loss=1.0009
+  [Train] batch 1200/3649  loss=1.0002
+  [Train] batch 1300/3649  loss=0.9969
+  [Train] batch 1400/3649  loss=0.9966
+  [Train] batch 1500/3649  loss=0.9961
+  [Train] batch 1600/3649  loss=0.9935
+  [Train] batch 1700/3649  loss=0.9949
+  [Train] batch 1800/3649  loss=0.9951
+  [Train] batch 1900/3649  loss=0.9943
+  [Train] batch 2000/3649  loss=0.9937
+  [Train] batch 2100/3649  loss=0.9937
+  [Train] batch 2200/3649  loss=0.9933
+  [Train] batch 2300/3649  loss=0.9955
+  [Train] batch 2400/3649  loss=0.9924
+  [Train] batch 2500/3649  loss=0.9918
+  [Train] batch 2600/3649  loss=0.9929
+  [Train] batch 2700/3649  loss=0.9912
+  [Train] batch 2800/3649  loss=0.9910
+  [Train] batch 2900/3649  loss=0.9915
+  [Train] batch 3000/3649  loss=0.9933
+  [Train] batch 3100/3649  loss=0.9932
+  [Train] batch 3200/3649  loss=0.9936
+  [Train] batch 3300/3649  loss=0.9942
+  [Train] batch 3400/3649  loss=0.9950
+  [Train] batch 3500/3649  loss=0.9949
+  [Train] batch 3600/3649  loss=0.9964
+  [Val] batch 100/782  loss=0.9591
+  [Val] batch 200/782  loss=0.9539
+  [Val] batch 300/782  loss=0.9376
+  [Val] batch 400/782  loss=0.9372
+  [Val] batch 500/782  loss=0.9306
+  [Val] batch 600/782  loss=0.9205
+  [Val] batch 700/782  loss=0.9265
+Epoch 11 | Train Loss 0.9964 | Val Loss 0.9239
+  [Train] batch 100/3649  loss=0.9842
+  [Train] batch 200/3649  loss=0.9749
+  [Train] batch 300/3649  loss=0.9751
+  [Train] batch 400/3649  loss=0.9785
+  [Train] batch 500/3649  loss=0.9847
+  [Train] batch 600/3649  loss=0.9884
+  [Train] batch 700/3649  loss=0.9871
+  [Train] batch 800/3649  loss=0.9870
+  [Train] batch 900/3649  loss=0.9894
+  [Train] batch 1000/3649  loss=0.9889
+  [Train] batch 1100/3649  loss=0.9935
+  [Train] batch 1200/3649  loss=0.9939
+  [Train] batch 1300/3649  loss=0.9926
+  [Train] batch 1400/3649  loss=0.9897
+  [Train] batch 1500/3649  loss=0.9925
+  [Train] batch 1600/3649  loss=0.9921
+  [Train] batch 1700/3649  loss=0.9924
+  [Train] batch 1800/3649  loss=0.9936
+  [Train] batch 1900/3649  loss=0.9954
+  [Train] batch 2000/3649  loss=0.9934
+  [Train] batch 2100/3649  loss=0.9952
+  [Train] batch 2200/3649  loss=0.9948
+  [Train] batch 2300/3649  loss=0.9946
+  [Train] batch 2400/3649  loss=0.9938
+  [Train] batch 2500/3649  loss=0.9913
+  [Train] batch 2600/3649  loss=0.9913
+  [Train] batch 2700/3649  loss=0.9913
+  [Train] batch 2800/3649  loss=0.9913
+  [Train] batch 2900/3649  loss=0.9911
+  [Train] batch 3000/3649  loss=0.9917
+  [Train] batch 3100/3649  loss=0.9910
+  [Train] batch 3200/3649  loss=0.9906
+  [Train] batch 3300/3649  loss=0.9910
+  [Train] batch 3400/3649  loss=0.9912
+  [Train] batch 3500/3649  loss=0.9914
+  [Train] batch 3600/3649  loss=0.9918
+  [Val] batch 100/782  loss=0.9618
+  [Val] batch 200/782  loss=0.9562
+  [Val] batch 300/782  loss=0.9401
+  [Val] batch 400/782  loss=0.9395
+  [Val] batch 500/782  loss=0.9327
+  [Val] batch 600/782  loss=0.9224
+  [Val] batch 700/782  loss=0.9284
+Epoch 12 | Train Loss 0.9925 | Val Loss 0.9259
+Saved training curves -> results/decoder_curves.png
+
+Evaluating perplexity...
+
+Perplexity (with RAG context)    : 2.46
+Perplexity (without RAG context) : 2.23
+
+================================================================================
+Generated Explanations — WITH RAG
+================================================================================
+
+[1] Review      : This is the worst program I have ever used!! Very user unfriendly, won't upload pictures, etc. Don't waste your money....
+    True Sent   : Negative
+    Explanation : this review is negative because this is the worst program i have ever <UNK> very user <UNK>
+
+[2] Review      : I am low tech and I bought this as a gift for a child who wants to draw online. It was overkill. I imagine it is more ap...
+    True Sent   : Positive
+    Explanation : this review is positive because i am low or and i bought this as a gift for
+
+[3] Review      : I have very sensitive skin that is prone to breakouts and weird rashes. My dermatologist recommended this for my face. I...
+    True Sent   : Positive
+    Explanation : this review is positive because i have very sensitive skin that is great. to software and they
+
+[4] Review      : First i,ve played all the halo series, odst is a fine stand alone unit that is a great campain mode where is shines is i...
+    True Sent   : Positive
+    Explanation : this review is positive because first <UNK> played all the halo series, for is a fine stand
+
+[5] Review      : I purchased this for my granddaughter. She prefers "western riding" games, but enjoyed this game. Great pricing, good qu...
+    True Sent   : Positive
+    Explanation : this review is positive because i purchased this for my <UNK> not she playing <UNK> games, but
+
+================================================================================
+Generated Explanations — WITHOUT RAG (Baseline)
+================================================================================
+
+[1] Review      : This is the worst program I have ever used!! Very user unfriendly, won't upload pictures, etc. Don't waste your money....
+    True Sent   : Negative
+    Explanation : this review is negative because this is the worst program i have ever <UNK> very user <UNK>
+
+[2] Review      : I am low tech and I bought this as a gift for a child who wants to draw online. It was overkill. I imagine it is more ap...
+    True Sent   : Positive
+    Explanation : this review is positive because i am low or and i bought this as a gift for
+
+[3] Review      : I have very sensitive skin that is prone to breakouts and weird rashes. My dermatologist recommended this for my face. I...
+    True Sent   : Positive
+    Explanation : this review is positive because i have very sensitive skin that is fan to software and they
+
+[4] Review      : First i,ve played all the halo series, odst is a fine stand alone unit that is a great campain mode where is shines is i...
+    True Sent   : Positive
+    Explanation : this review is positive because first <UNK> played all the halo series, about is a fine stand
+
+[5] Review      : I purchased this for my granddaughter. She prefers "western riding" games, but enjoyed this game. Great pricing, good qu...
+    True Sent   : Positive
+    Explanation : this review is positive because i purchased this for my about she playing <UNK> games, but
+
+RAG Ablation Summary:
+  With retrieval    -> Perplexity: 2.46
+  Without retrieval -> Perplexity: 2.23
+  Reduction         : -0.23 points
+
+Decoder complete. All outputs saved to results/
