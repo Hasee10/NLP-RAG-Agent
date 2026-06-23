@@ -3,6 +3,7 @@
 from pathlib import Path
 from functools import lru_cache
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # backend/app/config.py -> repo root is two parents up from this file's dir
@@ -15,6 +16,14 @@ class Settings(BaseSettings):
         env_file_encoding="utf-8",
         extra="ignore",
     )
+
+    @field_validator("*", mode="before")
+    @classmethod
+    def _strip_whitespace(cls, v):
+        # Defensive: env values pasted via dashboards often carry stray
+        # leading/trailing tabs or spaces. Strip them so a stray \t can't
+        # break URLs/keys.
+        return v.strip() if isinstance(v, str) else v
 
     # ── Supabase ──
     supabase_url: str
