@@ -1,8 +1,8 @@
-export const DEFAULT_CHAT_MODEL = "meta-llama/llama-3.3-70b-instruct:free";
+export const DEFAULT_CHAT_MODEL = "llama-3.3-70b-versatile";
 
 export const titleModel = {
-  id: "meta-llama/llama-3.3-70b-instruct:free",
-  name: "Llama 3.3 70B (Free)",
+  id: "llama-3.1-8b-instant",
+  name: "Llama 3.1 8B Instant",
   provider: "meta-llama",
   description: "Fast model for title generation",
 };
@@ -24,37 +24,37 @@ export type ChatModel = {
 
 export const chatModels: ChatModel[] = [
   {
-    id: "meta-llama/llama-3.3-70b-instruct:free",
-    name: "Llama 3.3 70B (Free)",
+    id: "llama-3.3-70b-versatile",
+    name: "Llama 3.3 70B (Groq)",
     provider: "meta-llama",
-    description: "Tool-capable free model — default",
+    description: "Best quality — default",
   },
   {
-    id: "deepseek/deepseek-r1:free",
-    name: "DeepSeek R1 (Free)",
-    provider: "deepseek",
-    description: "Free reasoning model (no tools)",
+    id: "llama-3.1-8b-instant",
+    name: "Llama 3.1 8B Instant (Groq)",
+    provider: "meta-llama",
+    description: "Fastest response time",
   },
   {
-    id: "google/gemma-3-27b-it:free",
-    name: "Gemma 3 27B (Free)",
+    id: "gemma2-9b-it",
+    name: "Gemma 2 9B (Groq)",
     provider: "google",
-    description: "Google Gemma free tier",
+    description: "Google Gemma via Groq",
   },
   {
-    id: "mistralai/mistral-7b-instruct:free",
-    name: "Mistral 7B (Free)",
+    id: "mixtral-8x7b-32768",
+    name: "Mixtral 8x7B (Groq)",
     provider: "mistralai",
-    description: "Mistral lightweight free model",
+    description: "Mixtral MoE model",
   },
 ];
 
-// Static capability map — all free models; tool support varies but we handle gracefully.
+// Static capability map
 const STATIC_CAPABILITIES: Record<string, ModelCapabilities> = {
-  "deepseek/deepseek-r1:free":                  { tools: false, vision: false, reasoning: true  },
-  "meta-llama/llama-3.3-70b-instruct:free":     { tools: true,  vision: false, reasoning: false },
-  "google/gemma-3-27b-it:free":                 { tools: false, vision: false, reasoning: false },
-  "mistralai/mistral-7b-instruct:free":         { tools: false, vision: false, reasoning: false },
+  "llama-3.3-70b-versatile": { tools: true,  vision: false, reasoning: false },
+  "llama-3.1-8b-instant":    { tools: true,  vision: false, reasoning: false },
+  "gemma2-9b-it":            { tools: false, vision: false, reasoning: false },
+  "mixtral-8x7b-32768":      { tools: false, vision: false, reasoning: false },
 };
 
 export async function getCapabilities(): Promise<Record<string, ModelCapabilities>> {

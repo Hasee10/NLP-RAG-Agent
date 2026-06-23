@@ -2,6 +2,10 @@
 .env
 .env.*
 !.env.example
+db_password.txt
+*_password.txt
+*.key
+*.pem
 
 # ── python ──
 __pycache__/

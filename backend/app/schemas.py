@@ -2,15 +2,18 @@
 
 from pydantic import BaseModel, Field
 
+_MAX_REVIEW_LEN = 5_000   # ~1,000 words; prevents memory/storage abuse
+_MAX_INGEST_BATCH = 500   # single ingest call cap
+
 
 class ReviewIn(BaseModel):
-    text: str
-    sentiment: str | None = None
+    text: str = Field(..., min_length=1, max_length=_MAX_REVIEW_LEN)
+    sentiment: str | None = Field(None, max_length=20)
     length_label: int | None = None
 
 
 class IngestRequest(BaseModel):
-    reviews: list[ReviewIn]
+    reviews: list[ReviewIn] = Field(..., min_length=1, max_length=_MAX_INGEST_BATCH)
 
 
 class IngestResponse(BaseModel):
@@ -19,7 +22,7 @@ class IngestResponse(BaseModel):
 
 
 class QueryRequest(BaseModel):
-    review: str = Field(..., min_length=1)
+    review: str = Field(..., min_length=3, max_length=_MAX_REVIEW_LEN)
     top_k: int = Field(5, ge=1, le=20)
 
 

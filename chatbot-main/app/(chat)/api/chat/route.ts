@@ -46,31 +46,40 @@ import { type PostRequestBody, postRequestBodySchema } from "./schema";
 
 export const maxDuration = 60;
 
-async function fetchRagContext(text: string): Promise<string | null> {
+type RagData = {
+  predicted_sentiment: string;
+  explanation: string;
+  retrieved: { sentiment: string; similarity: number; text: string }[];
+};
+
+async function fetchRagData(text: string): Promise<RagData | null> {
   try {
     const backendUrl = process.env.BACKEND_URL ?? "http://localhost:8000";
     const res = await fetch(`${backendUrl}/query`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ review: text, top_k: 5 }),
+      body: JSON.stringify({ review: text.slice(0, 5000), top_k: 5 }),
       signal: AbortSignal.timeout(15000),
     });
     if (!res.ok) return null;
-    const data = await res.json();
-    const lines = [
-      `RAG ANALYSIS RESULT (retrieved from 5000-review pgvector database):`,
-      `Predicted sentiment: ${data.predicted_sentiment}`,
-      `\nTop ${data.retrieved?.length ?? 0} similar reviews:`,
-      ...(data.retrieved ?? []).map(
-        (r: { sentiment: string; similarity: number; text: string }, i: number) =>
-          `  ${i + 1}. (${r.sentiment}, sim=${r.similarity.toFixed(3)}) "${r.text.slice(0, 120)}"`
-      ),
-      `\nGrounded explanation from LLM: ${data.explanation}`,
-    ];
-    return lines.join("\n");
+    return await res.json();
   } catch {
     return null;
   }
+}
+
+function formatRagContext(data: RagData): string {
+  const pct = (s: number) => `${(s * 100).toFixed(0)}%`;
+  const neighbors = (data.retrieved ?? [])
+    .map((r, i) => `  ${i + 1}. [${r.sentiment}] ${pct(r.similarity)} match — "${r.text.slice(0, 120)}"`)
+    .join("\n");
+  return [
+    `<rag_data>`,
+    `sentiment: ${data.predicted_sentiment}`,
+    `neighbors:\n${neighbors}`,
+    `explanation: ${data.explanation}`,
+    `</rag_data>`,
+  ].join("\n");
 }
 
 function looksLikeReview(text: string): boolean {
@@ -104,10 +113,14 @@ export async function POST(request: Request) {
     const { id, message, messages, selectedChatModel, selectedVisibilityType } =
       requestBody;
 
-    const [, session] = await Promise.all([
-      checkBotId().catch(() => null),
+    const [botCheck, session] = await Promise.all([
+      checkBotId().catch(() => ({ isBot: false })),
       auth(),
     ]);
+
+    if (botCheck?.isBot) {
+      return new ChatbotError("bad_request:api").toResponse();
+    }
 
     if (!session?.user) {
       return new ChatbotError("unauthorized:chat").toResponse();
@@ -226,9 +239,9 @@ export async function POST(request: Request) {
       ?.filter((p: Record<string, unknown>) => p.type === "text")
       .map((p: Record<string, unknown>) => String(p.text ?? ""))
       .join(" ") ?? "";
-    const ragContext = looksLikeReview(latestUserText)
-      ? await fetchRagContext(latestUserText)
-      : null;
+    const isReview = looksLikeReview(latestUserText);
+    const ragData = isReview ? await fetchRagData(latestUserText) : null;
+    const ragContext = ragData ? formatRagContext(ragData) : null;
 
     const stream = createUIMessageStream({
       originalMessages: isToolApprovalFlow ? uiMessages : undefined,
@@ -236,12 +249,12 @@ export async function POST(request: Request) {
         const result = streamText({
           model: getLanguageModel(chatModel),
           system: ragContext
-            ? `${systemPrompt({ requestHints, supportsTools })}\n\n${ragContext}`
+            ? `${systemPrompt({ requestHints, supportsTools: false })}\n\n${ragContext}`
             : systemPrompt({ requestHints, supportsTools }),
           messages: modelMessages,
           stopWhen: stepCountIs(5),
           experimental_activeTools:
-            isReasoningModel && !supportsTools
+            (isReasoningModel && !supportsTools) || ragContext
               ? []
               : [
                   "createDocument",
@@ -340,9 +353,24 @@ export async function POST(request: Request) {
             "AI Gateway requires a valid credit card on file to service requests"
           )
         ) {
-          return "AI Gateway requires a valid credit card on file to service requests. Please visit https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%3Fmodal%3Dadd-credit-card to add a card and unlock your free credits.";
+          return "AI Gateway requires a valid credit card on file to service requests.";
         }
-        return "Oops, an error occurred!";
+        // LLM unavailable — surface the RAG backend result directly
+        if (ragData) {
+          const sentiment = ragData.predicted_sentiment ?? "Unknown";
+          const pct = (s: number) => `${(s * 100).toFixed(0)}%`;
+          const top = (ragData.retrieved ?? []).slice(0, 3);
+          const lines = [
+            `**Sentiment: ${sentiment}** *(LLM temporarily unavailable — raw RAG result)*`,
+            ``,
+            `**Similar reviews:**`,
+            ...top.map((r, i) => `${i + 1}. **${r.sentiment}** (${pct(r.similarity)} match) — "${r.text.slice(0, 100)}"`),
+            ``,
+            `**Explanation:** ${ragData.explanation}`,
+          ];
+          return lines.join("\n");
+        }
+        return "The AI model is temporarily unavailable. Please try again in a moment, or switch to a different model using the selector above.";
       },
     });
 

@@ -47,9 +47,11 @@ export async function POST(request: Request) {
     const filename = (formData.get("file") as File).name;
     const safeName = filename.replace(/[^a-zA-Z0-9._-]/g, "_");
     const fileBuffer = await file.arrayBuffer();
+    // Namespace by userId so users cannot overwrite each other's files
+    const blobPath = `uploads/${session.user.id}/${Date.now()}_${safeName}`;
 
     try {
-      const data = await put(`${safeName}`, fileBuffer, {
+      const data = await put(blobPath, fileBuffer, {
         access: "public",
       });
 

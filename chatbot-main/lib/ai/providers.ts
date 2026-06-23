@@ -1,15 +1,10 @@
 import { createOpenAI } from "@ai-sdk/openai";
 import { isTestEnvironment } from "../constants";
 
-function buildOpenRouter() {
+function buildGroq() {
   return createOpenAI({
-    baseURL: "https://openrouter.ai/api/v1",
-    apiKey: process.env.OPENROUTER_API_KEY ?? "",
-    compatibility: "compatible", // use /chat/completions, not /responses
-    headers: {
-      "HTTP-Referer": "http://localhost:3000",
-      "X-Title": "RAG Sentiment Agent",
-    },
+    baseURL: "https://api.groq.com/openai/v1",
+    apiKey: process.env.GROQ_API_KEY ?? "",
   });
 }
 
@@ -19,7 +14,7 @@ export function getLanguageModel(modelId: string) {
     const { customProvider } = require("ai");
     return customProvider({ languageModels: { "chat-model": chatModel } }).languageModel("chat-model");
   }
-  return buildOpenRouter()(modelId);
+  return buildGroq()(modelId);
 }
 
 export function getTitleModel() {
@@ -28,5 +23,5 @@ export function getTitleModel() {
     const { customProvider } = require("ai");
     return customProvider({ languageModels: { "title-model": titleModel } }).languageModel("title-model");
   }
-  return buildOpenRouter()("meta-llama/llama-3.3-70b-instruct:free");
+  return buildGroq()("llama-3.1-8b-instant");
 }
