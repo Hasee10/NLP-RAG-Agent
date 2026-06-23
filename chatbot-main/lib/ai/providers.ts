@@ -5,6 +5,7 @@ function buildOpenRouter() {
   return createOpenAI({
     baseURL: "https://openrouter.ai/api/v1",
     apiKey: process.env.OPENROUTER_API_KEY ?? "",
+    compatibility: "compatible", // use /chat/completions, not /responses
     headers: {
       "HTTP-Referer": "http://localhost:3000",
       "X-Title": "RAG Sentiment Agent",

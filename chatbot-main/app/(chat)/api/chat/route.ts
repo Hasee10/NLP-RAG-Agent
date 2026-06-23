@@ -20,7 +20,6 @@ import {
 } from "@/lib/ai/models";
 import { type RequestHints, systemPrompt } from "@/lib/ai/prompts";
 import { getLanguageModel } from "@/lib/ai/providers";
-import { analyzeReview } from "@/lib/ai/tools/analyze-review";
 import { createDocument } from "@/lib/ai/tools/create-document";
 import { editDocument } from "@/lib/ai/tools/edit-document";
 import { requestSuggestions } from "@/lib/ai/tools/request-suggestions";
@@ -46,6 +45,40 @@ import { generateTitleFromUserMessage } from "../../actions";
 import { type PostRequestBody, postRequestBodySchema } from "./schema";
 
 export const maxDuration = 60;
+
+async function fetchRagContext(text: string): Promise<string | null> {
+  try {
+    const backendUrl = process.env.BACKEND_URL ?? "http://localhost:8000";
+    const res = await fetch(`${backendUrl}/query`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ review: text, top_k: 5 }),
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    const lines = [
+      `RAG ANALYSIS RESULT (retrieved from 5000-review pgvector database):`,
+      `Predicted sentiment: ${data.predicted_sentiment}`,
+      `\nTop ${data.retrieved?.length ?? 0} similar reviews:`,
+      ...(data.retrieved ?? []).map(
+        (r: { sentiment: string; similarity: number; text: string }, i: number) =>
+          `  ${i + 1}. (${r.sentiment}, sim=${r.similarity.toFixed(3)}) "${r.text.slice(0, 120)}"`
+      ),
+      `\nGrounded explanation from LLM: ${data.explanation}`,
+    ];
+    return lines.join("\n");
+  } catch {
+    return null;
+  }
+}
+
+function looksLikeReview(text: string): boolean {
+  const words = text.trim().split(/\s+/).length;
+  const isQuestion = text.trim().endsWith("?");
+  const startsWithHow = /^(how|what|why|when|where|explain|describe|tell)/i.test(text.trim());
+  return words >= 6 && !isQuestion && !startsWithHow;
+}
 
 function getStreamContext() {
   try {
@@ -188,19 +221,29 @@ export async function POST(request: Request) {
 
     const modelMessages = await convertToModelMessages(uiMessages);
 
+    // Pre-fetch RAG context if the latest user message looks like a review
+    const latestUserText = message?.parts
+      ?.filter((p: Record<string, unknown>) => p.type === "text")
+      .map((p: Record<string, unknown>) => String(p.text ?? ""))
+      .join(" ") ?? "";
+    const ragContext = looksLikeReview(latestUserText)
+      ? await fetchRagContext(latestUserText)
+      : null;
+
     const stream = createUIMessageStream({
       originalMessages: isToolApprovalFlow ? uiMessages : undefined,
       execute: async ({ writer: dataStream }) => {
         const result = streamText({
           model: getLanguageModel(chatModel),
-          system: systemPrompt({ requestHints, supportsTools }),
+          system: ragContext
+            ? `${systemPrompt({ requestHints, supportsTools })}\n\n${ragContext}`
+            : systemPrompt({ requestHints, supportsTools }),
           messages: modelMessages,
           stopWhen: stepCountIs(5),
           experimental_activeTools:
             isReasoningModel && !supportsTools
               ? []
               : [
-                  "analyzeReview",
                   "createDocument",
                   "editDocument",
                   "updateDocument",
@@ -215,7 +258,6 @@ export async function POST(request: Request) {
             }),
           },
           tools: {
-            analyzeReview,
             createDocument: createDocument({
               session,
               dataStream,
