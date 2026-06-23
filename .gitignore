@@ -1,0 +1,25 @@
+# ── secrets (NEVER commit) ──
+.env
+.env.*
+!.env.example
+
+# ── python ──
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+
+# ── large data & model artifacts (regenerate via the pipeline / store in Supabase) ──
+Haseeb.csv
+data/*.csv
+results/*.npy
+results/*_contexts.csv
+models/*.pt
+results/task_c_train.log
+
+# ── frontend / deploy (added later) ──
+node_modules/
+.vercel/
+.next/
+dist/
