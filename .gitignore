@@ -20,6 +20,7 @@ data/*.csv
 results/*.npy
 results/*_contexts.csv
 models/*.pt
+!models/encoder_best.pt
 results/task_c_train.log
 
 # ── frontend / deploy (added later) ──
