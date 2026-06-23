@@ -1,4 +1,12 @@
 {
-  "perplexity_rag": 2.4575681103912435,
-  "perplexity_norag": 2.2261365882274897
+  "perplexity_rag": 5.308972568907147,
+  "perplexity_norag": 5.9725174188473575,
+  "relative_improvement_pct": 11.109969271019201,
+  "best_val_loss": 1.6598024868965149,
+  "config": {
+    "train_n": 4000,
+    "epochs": 4,
+    "src_len": 96,
+    "tgt_len": 28
+  }
 }

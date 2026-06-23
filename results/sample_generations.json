@@ -1,0 +1,32 @@
+[
+  {
+    "review": "This is the worst program I have ever used!! Very user unfriendly, won't upload pictures, etc. Don't waste your money.",
+    "sentiment": "Negative",
+    "with_rag": "this review is negative because similar reviewers mention game great",
+    "without_rag": "this review is negative because similar reviewers mention game good"
+  },
+  {
+    "review": "I am low tech and I bought this as a gift for a child who wants to draw online. It was overkill. I imagine it is more appropriate for engineers and graphic artists, but it was more than I needed. Also",
+    "sentiment": "Positive",
+    "with_rag": "this review is positive because similar reviewers mention game great",
+    "without_rag": "this review is positive because similar reviewers mention game great"
+  },
+  {
+    "review": "I have very sensitive skin that is prone to breakouts and weird rashes. My dermatologist recommended this for my face. I run a lot and am training for a triathlon so I spend a lot of time outside. I'm",
+    "sentiment": "Positive",
+    "with_rag": "this review is positive because similar reviewers mention game great",
+    "without_rag": "this review is positive because similar reviewers mention game great"
+  },
+  {
+    "review": "First i,ve played all the halo series, odst is a fine stand alone unit that is a great campain mode where is shines is in the firefight mode, players have keep finding off enemy forces as long as your",
+    "sentiment": "Positive",
+    "with_rag": "this review is positive because similar reviewers mention game time",
+    "without_rag": "this review is positive because similar reviewers mention game good"
+  },
+  {
+    "review": "I purchased this for my granddaughter. She prefers \"western riding\" games, but enjoyed this game. Great pricing, good quality and quick delivery response appreciated!",
+    "sentiment": "Positive",
+    "with_rag": "this review is positive because similar reviewers mention game great",
+    "without_rag": "this review is positive because similar reviewers mention game great"
+  }
+]

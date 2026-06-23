@@ -110,9 +110,9 @@ present — so the perplexity gap measures genuine retrieval value.
 
 | Configuration | Perplexity |
 |---------------|-----------|
-| **With retrieved context (RAG)** | **__PPL_RAG__** |
-| Without context (baseline) | __PPL_NORAG__ |
-| **Relative improvement from retrieval** | **__PPL_IMPROV__** |
+| **With retrieved context (RAG)** | **5.31** |
+| Without context (baseline) | 5.97 |
+| **Relative improvement from retrieval** | **11.1 %** |
 
 ![Decoder Training Curves](results/decoder_curves.png)
 

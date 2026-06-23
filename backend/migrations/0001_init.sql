@@ -14,9 +14,10 @@ create table if not exists reviews (
 );
 
 -- Approximate-nearest-neighbour index for cosine distance.
--- (Build/refresh after bulk ingest; lists ~= sqrt(rows).)
+-- HNSW (not ivfflat): needs no training data, so it works correctly even when the
+-- table is empty or small and builds incrementally as rows are ingested.
 create index if not exists reviews_embedding_idx
-    on reviews using ivfflat (embedding vector_cosine_ops) with (lists = 100);
+    on reviews using hnsw (embedding vector_cosine_ops);
 
 -- Cosine top-k retrieval, called from the backend via supabase.rpc('match_reviews').
 create or replace function match_reviews(

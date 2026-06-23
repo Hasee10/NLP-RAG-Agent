@@ -23,12 +23,18 @@ def upsert_reviews(rows: list[dict]) -> int:
     return len(rows)
 
 
+def _to_pgvector(vec: list[float]) -> str:
+    """pgvector RPC params must be passed as a string literal '[v1,v2,...]',
+    not a JSON array (PostgREST won't bind a JSON array to a vector parameter)."""
+    return "[" + ",".join(repr(float(x)) for x in vec) + "]"
+
+
 def match_reviews(query_embedding: list[float], match_count: int = 5) -> list[dict]:
     """Cosine top-k via the match_reviews SQL function (see migrations/0001_init.sql)."""
     client = get_client()
     resp = client.rpc(
         "match_reviews",
-        {"query_embedding": query_embedding, "match_count": match_count},
+        {"query_embedding": _to_pgvector(query_embedding), "match_count": match_count},
     ).execute()
     return resp.data or []
 
