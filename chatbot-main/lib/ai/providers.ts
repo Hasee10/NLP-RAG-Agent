@@ -1,30 +1,31 @@
-import { customProvider, gateway } from "ai";
+import { createOpenAI } from "@ai-sdk/openai";
 import { isTestEnvironment } from "../constants";
-import { titleModel } from "./models";
 
-export const myProvider = isTestEnvironment
-  ? (() => {
-      const { chatModel, titleModel } = require("./models.mock");
-      return customProvider({
-        languageModels: {
-          "chat-model": chatModel,
-          "title-model": titleModel,
-        },
-      });
-    })()
-  : null;
+function buildOpenRouter() {
+  return createOpenAI({
+    baseURL: "https://openrouter.ai/api/v1",
+    apiKey: process.env.OPENROUTER_API_KEY ?? "",
+    headers: {
+      "HTTP-Referer": "http://localhost:3000",
+      "X-Title": "RAG Sentiment Agent",
+    },
+  });
+}
 
 export function getLanguageModel(modelId: string) {
-  if (isTestEnvironment && myProvider) {
-    return myProvider.languageModel(modelId);
+  if (isTestEnvironment) {
+    const { chatModel } = require("./models.mock");
+    const { customProvider } = require("ai");
+    return customProvider({ languageModels: { "chat-model": chatModel } }).languageModel("chat-model");
   }
-
-  return gateway.languageModel(modelId);
+  return buildOpenRouter()(modelId);
 }
 
 export function getTitleModel() {
-  if (isTestEnvironment && myProvider) {
-    return myProvider.languageModel("title-model");
+  if (isTestEnvironment) {
+    const { titleModel } = require("./models.mock");
+    const { customProvider } = require("ai");
+    return customProvider({ languageModels: { "title-model": titleModel } }).languageModel("title-model");
   }
-  return gateway.languageModel(titleModel.id);
+  return buildOpenRouter()("meta-llama/llama-3.3-70b-instruct:free");
 }
