@@ -71,6 +71,14 @@ export function getActiveModels(): ChatModel[] {
   return chatModels;
 }
 
+export async function getAllGatewayModels(): Promise<GatewayModelWithCapabilities[]> {
+  const caps = await getCapabilities();
+  return chatModels.map((m) => ({
+    ...m,
+    capabilities: caps[m.id] ?? { tools: false, vision: false, reasoning: false },
+  }));
+}
+
 export const allowedModelIds = new Set(chatModels.map((m) => m.id));
 
 export const modelsByProvider = chatModels.reduce(
