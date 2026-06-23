@@ -1,9 +1,9 @@
-export const DEFAULT_CHAT_MODEL = "deepseek/deepseek-r1:free";
+export const DEFAULT_CHAT_MODEL = "meta-llama/llama-3.3-70b-instruct:free";
 
 export const titleModel = {
-  id: "deepseek/deepseek-r1:free",
-  name: "DeepSeek R1 (Free)",
-  provider: "deepseek",
+  id: "meta-llama/llama-3.3-70b-instruct:free",
+  name: "Llama 3.3 70B (Free)",
+  provider: "meta-llama",
   description: "Fast model for title generation",
 };
 
@@ -24,16 +24,16 @@ export type ChatModel = {
 
 export const chatModels: ChatModel[] = [
   {
-    id: "deepseek/deepseek-r1:free",
-    name: "DeepSeek R1 (Free)",
-    provider: "deepseek",
-    description: "Free reasoning model — default",
-  },
-  {
     id: "meta-llama/llama-3.3-70b-instruct:free",
     name: "Llama 3.3 70B (Free)",
     provider: "meta-llama",
-    description: "Meta's open-source 70B model, free tier",
+    description: "Tool-capable free model — default",
+  },
+  {
+    id: "deepseek/deepseek-r1:free",
+    name: "DeepSeek R1 (Free)",
+    provider: "deepseek",
+    description: "Free reasoning model (no tools)",
   },
   {
     id: "google/gemma-3-27b-it:free",
