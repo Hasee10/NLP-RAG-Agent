@@ -9,7 +9,8 @@ export const Greeting = () => {
         initial={{ opacity: 0, y: 10 }}
         transition={{ delay: 0.35, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       >
-        Medical AI Assistant
+          <span className="text-teal-600 dark:text-teal-400">Med</span>
+        <span>IQ</span>
       </motion.div>
       <motion.div
         animate={{ opacity: 1, y: 0 }}
@@ -17,8 +18,8 @@ export const Greeting = () => {
         initial={{ opacity: 0, y: 10 }}
         transition={{ delay: 0.5, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       >
-        Ask any medical question — answers grounded in 37,000+ MedQuAD sources
-        via Supabase pgvector semantic search.
+        Medical &amp; dental answers grounded in NIH MedQuAD, ADA, and MedlinePlus
+        sources — not guesswork.
       </motion.div>
     </div>
   );

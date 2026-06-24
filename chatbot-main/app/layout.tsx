@@ -7,9 +7,20 @@ import "./globals.css";
 import { SessionProvider } from "next-auth/react";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://chat.vercel.ai"),
-  title: "Next.js Chatbot Template",
-  description: "Next.js chatbot template using the AI SDK.",
+  metadataBase: new URL("https://mediq.vercel.app"),
+  title: {
+    default: "MedIQ — Medical AI Assistant",
+    template: "%s | MedIQ",
+  },
+  description:
+    "Ask any medical or dental question. Answers grounded in 37,000+ NIH MedQuAD sources via semantic search — not guesswork.",
+  keywords: ["medical AI", "dental AI", "health assistant", "MedQuAD", "RAG", "NIH"],
+  openGraph: {
+    title: "MedIQ — Medical AI Assistant",
+    description:
+      "Evidence-grounded answers to medical and dental questions, powered by NIH MedQuAD + ADA sources.",
+    type: "website",
+  },
 };
 
 export const viewport = {
