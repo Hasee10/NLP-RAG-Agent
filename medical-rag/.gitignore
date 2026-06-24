@@ -1,0 +1,9 @@
+# Regenerable artifacts — produced by the collectors / preprocessing
+data/raw/
+data/cache/
+data/processed/
+models/
+logs/
+__pycache__/
+*.pyc
+.env

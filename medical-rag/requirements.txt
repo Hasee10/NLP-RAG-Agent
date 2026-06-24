@@ -1,0 +1,16 @@
+# Phase 1 — data collection
+requests==2.32.3
+
+# Phase 2 — preprocessing (chunking, dedup, hard negatives)
+tiktoken==0.8.0
+datasketch==1.6.5
+rank-bm25==0.2.2
+
+# Phase 3/4 — embeddings + ingest (off-the-shelf biomedical sentence model, CPU)
+sentence-transformers==3.3.1
+torch==2.4.1
+supabase==2.10.0
+httpx==0.27.2
+
+# shared
+python-dotenv==1.0.1
