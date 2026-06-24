@@ -360,16 +360,12 @@ export async function POST(request: Request) {
         }
         // LLM unavailable — surface the RAG backend result directly
         if (ragData) {
-          const sentiment = ragData.predicted_sentiment ?? "Unknown";
-          const pct = (s: number) => `${(s * 100).toFixed(0)}%`;
-          const top = (ragData.retrieved ?? []).slice(0, 3);
           const lines = [
-            `**Sentiment: ${sentiment}** *(LLM temporarily unavailable — raw RAG result)*`,
+            `*(LLM temporarily unavailable — showing raw RAG result)*`,
             ``,
-            `**Similar reviews:**`,
-            ...top.map((r, i) => `${i + 1}. **${r.sentiment}** (${pct(r.similarity)} match) — "${r.text.slice(0, 100)}"`),
+            ragData.answer,
             ``,
-            `**Explanation:** ${ragData.explanation}`,
+            `*${ragData.disclaimer}*`,
           ];
           return lines.join("\n");
         }
