@@ -30,7 +30,7 @@ load_dotenv(ROOT / ".env")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 log = logging.getLogger("retrieve")
 
-MODEL_NAME = "pritamdeka/S-PubMedBert-MS-MARCO"
+MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 TABLE = "medical_chunks"
 
 # ── keyword → body_system (mirrors medquad collector) ──────────────────────

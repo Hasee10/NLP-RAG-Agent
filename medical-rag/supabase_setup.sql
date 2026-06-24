@@ -1,11 +1,13 @@
 -- Medical RAG — Supabase pgvector setup
 -- Run this in the Supabase SQL Editor once before ingestion.
+-- Model: all-MiniLM-L6-v2 → 384-dim embeddings
 
 -- 1. Enable pgvector
 CREATE EXTENSION IF NOT EXISTS vector;
 
--- 2. Create the corpus table
-CREATE TABLE IF NOT EXISTS medical_chunks (
+-- 2. Drop and recreate table (safe: table is empty before first ingest)
+DROP TABLE IF EXISTS medical_chunks CASCADE;
+CREATE TABLE medical_chunks (
     id             TEXT PRIMARY KEY,
     text           TEXT NOT NULL,
     source         TEXT,
@@ -13,7 +15,7 @@ CREATE TABLE IF NOT EXISTS medical_chunks (
     body_system    TEXT,
     severity_level INT,
     tags           TEXT[],
-    embedding      VECTOR(768)
+    embedding      VECTOR(384)
 );
 
 -- 3. IVFFlat index for fast ANN search (lists = sqrt(37516) ≈ 100)
@@ -24,7 +26,7 @@ CREATE INDEX IF NOT EXISTS medical_chunks_embedding_idx
 
 -- 4. Match function — supports optional body_system and type filters
 CREATE OR REPLACE FUNCTION match_medical_chunks(
-    query_embedding     VECTOR(768),
+    query_embedding     VECTOR(384),
     match_count         INT      DEFAULT 10,
     filter_body_system  TEXT     DEFAULT NULL,
     filter_type         TEXT     DEFAULT NULL

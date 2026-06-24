@@ -25,7 +25,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 log = logging.getLogger("embed")
 
 PROCESSED = ROOT / "data" / "processed"
-MODEL_NAME = "pritamdeka/S-PubMedBert-MS-MARCO"
+MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"  # 384-dim, fast CPU, upgrade to BiomedBERT later
 
 
 def load_corpus(path: Path) -> list[dict]:
