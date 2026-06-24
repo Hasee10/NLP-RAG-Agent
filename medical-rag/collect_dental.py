@@ -194,7 +194,14 @@ def embed_and_ingest(chunks: list[dict]):
 
     rows = []
     for chunk, emb in zip(chunks, embeddings):
-        rows.append({**chunk, "embedding": emb.tolist()})
+        rows.append({
+            "id": chunk["id"],
+            "text": chunk["text"],
+            "source": chunk["source"],
+            "type": chunk["type"],
+            "body_system": chunk["body_system"],
+            "embedding": emb.tolist(),
+        })
 
     log.info("upserting %d rows to Supabase...", len(rows))
     for i in range(0, len(rows), BATCH_SIZE):
