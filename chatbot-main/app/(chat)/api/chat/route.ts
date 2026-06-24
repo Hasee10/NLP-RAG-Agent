@@ -128,17 +128,41 @@ function formatSentimentContext(data: SentimentRagData): string {
 
 // ── Query routing ─────────────────────────────────────────────────────────────
 const MEDICAL_KW = [
+  // General medical
   "symptom", "disease", "diagnosis", "treatment", "medication", "drug", "dose",
   "pain", "fever", "cancer", "diabetes", "heart", "blood", "lung", "kidney",
   "brain", "nerve", "bone", "muscle", "skin", "allergy", "infection", "surgery",
   "therapy", "vaccine", "vitamin", "diet", "exercise", "health", "medical",
   "doctor", "hospital", "pharmacy", "prescription", "side effect", "cause",
   "prevent", "cure", "chronic", "acute", "hypertension", "stroke", "asthma",
+  // Dental / oral
+  "teeth", "tooth", "dental", "dentist", "gum", "mouth", "oral", "jaw",
+  "cavity", "braces", "crown", "filling", "root canal", "plaque", "tartar",
+  "enamel", "molar", "incisor", "periodon", "gingivit", "toothache", "bite",
+  "orthodon", "denture", "implant", "extraction", "abscess", "fluoride",
+  "tmj", "bruxism", "wisdom",
+  // Body parts & systems
+  "liver", "stomach", "intestin", "colon", "spine", "joint", "artery",
+  "vein", "thyroid", "hormone", "adrenal", "prostate", "ovary", "uterus",
+  "bladder", "urinary", "pancrea", "gallbladder", "lymph", "immune",
+  // Conditions & symptoms
+  "swelling", "rash", "nausea", "vomit", "diarrhea", "constipat", "headache",
+  "dizzy", "fatigue", "bleed", "bruise", "sore", "ulcer", "abscess", "cyst",
+  "tumor", "lump", "growt", "born with", "congenital", "hereditary", "genetic",
+  "supernumerary", "extra", "abnormal", "condition", "disorder", "syndrome",
 ];
 
 function isMedicalQuery(text: string): boolean {
   const lower = text.toLowerCase();
   return MEDICAL_KW.some((kw) => lower.includes(kw));
+}
+
+function isHealthRelated(text: string): boolean {
+  // Broader catch — also picks up body-related questions that slip past MEDICAL_KW
+  const lower = text.toLowerCase();
+  const bodyWords = ["body", "born", "body part", "anatomy", "physiology",
+    "normal", "abnormal", "fix", "treat", "cure", "heal", "hurt", "ache"];
+  return isMedicalQuery(lower) || bodyWords.some((w) => lower.includes(w));
 }
 
 function looksLikeReview(text: string): boolean {
@@ -299,6 +323,7 @@ export async function POST(request: Request) {
       .map((p: Record<string, unknown>) => String(p.text ?? ""))
       .join(" ") ?? "";
 
+    const isHealth = isHealthRelated(latestUserText);
     const [medicalData, sentimentData] = await Promise.all([
       isMedicalQuery(latestUserText) ? fetchMedicalRag(latestUserText) : Promise.resolve(null),
       looksLikeReview(latestUserText) ? fetchSentimentRag(latestUserText) : Promise.resolve(null),
@@ -320,7 +345,7 @@ export async function POST(request: Request) {
           messages: modelMessages,
           stopWhen: stepCountIs(5),
           experimental_activeTools:
-            (isReasoningModel && !supportsTools) || ragContext
+            (isReasoningModel && !supportsTools) || ragContext || isHealth
               ? []
               : [
                   "createDocument",
