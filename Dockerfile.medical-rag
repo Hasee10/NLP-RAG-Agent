@@ -1,0 +1,22 @@
+# Medical RAG backend (FastAPI + sentence-transformers + Supabase + OpenRouter)
+# Build context = repo root
+FROM python:3.10-slim
+
+ENV PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
+
+WORKDIR /app
+
+# Install CPU-only PyTorch first to avoid the multi-GB CUDA build
+RUN pip install torch --index-url https://download.pytorch.org/whl/cpu
+
+# Install remaining deps (torch>=2.6.0 already satisfied above)
+COPY medical-rag/requirements.txt ./requirements.txt
+RUN pip install fastapi uvicorn python-dotenv openai "supabase==2.10.0" \
+    "sentence-transformers==3.3.1" "httpx==0.27.2" "numpy<2"
+
+# App code
+COPY medical-rag/ ./medical-rag/
+
+WORKDIR /app/medical-rag
+CMD ["sh", "-c", "uvicorn query:app --host 0.0.0.0 --port ${PORT:-8000}"]

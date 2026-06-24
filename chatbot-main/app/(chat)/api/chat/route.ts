@@ -46,20 +46,25 @@ import { type PostRequestBody, postRequestBodySchema } from "./schema";
 
 export const maxDuration = 60;
 
-type RagData = {
-  predicted_sentiment: string;
-  explanation: string;
-  retrieved: { sentiment: string; similarity: number; text: string }[];
+type MedicalRagData = {
+  answer: string;
+  citations: string[];
+  disclaimer: string;
+  chunks: { text: string; source?: string; type?: string; body_system?: string; similarity?: number }[];
+  model: string;
+  body_system: string | null;
+  chunk_type: string | null;
+  sources_used: number;
 };
 
-async function fetchRagData(text: string): Promise<RagData | null> {
+async function fetchRagData(text: string): Promise<MedicalRagData | null> {
   try {
     const backendUrl = process.env.BACKEND_URL ?? "http://localhost:8000";
     const res = await fetch(`${backendUrl}/query`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ review: text.slice(0, 5000), top_k: 5 }),
-      signal: AbortSignal.timeout(15000),
+      body: JSON.stringify({ query: text.slice(0, 2000), top_k: 5 }),
+      signal: AbortSignal.timeout(20000),
     });
     if (!res.ok) return null;
     return await res.json();
@@ -68,25 +73,23 @@ async function fetchRagData(text: string): Promise<RagData | null> {
   }
 }
 
-function formatRagContext(data: RagData): string {
-  const pct = (s: number) => `${(s * 100).toFixed(0)}%`;
-  const neighbors = (data.retrieved ?? [])
-    .map((r, i) => `  ${i + 1}. [${r.sentiment}] ${pct(r.similarity)} match — "${r.text.slice(0, 120)}"`)
+function formatRagContext(data: MedicalRagData): string {
+  const sources = (data.chunks ?? [])
+    .map((c, i) => `  [${i + 1}] (${c.source ?? "unknown"} / ${c.type ?? ""}) "${c.text.slice(0, 200)}"`)
     .join("\n");
   return [
-    `<rag_data>`,
-    `sentiment: ${data.predicted_sentiment}`,
-    `neighbors:\n${neighbors}`,
-    `explanation: ${data.explanation}`,
-    `</rag_data>`,
+    `<medical_rag>`,
+    `grounded_answer: ${data.answer}`,
+    `body_system: ${data.body_system ?? "general"}`,
+    `sources:\n${sources}`,
+    `disclaimer: ${data.disclaimer}`,
+    `</medical_rag>`,
   ].join("\n");
 }
 
-function looksLikeReview(text: string): boolean {
+function isMedicalQuery(text: string): boolean {
   const words = text.trim().split(/\s+/).length;
-  const isQuestion = text.trim().endsWith("?");
-  const startsWithHow = /^(how|what|why|when|where|explain|describe|tell)/i.test(text.trim());
-  return words >= 6 && !isQuestion && !startsWithHow;
+  return words >= 3;
 }
 
 function getStreamContext() {
@@ -234,13 +237,13 @@ export async function POST(request: Request) {
 
     const modelMessages = await convertToModelMessages(uiMessages);
 
-    // Pre-fetch RAG context if the latest user message looks like a review
+    // Pre-fetch medical RAG context for every user message
     const latestUserText = message?.parts
       ?.filter((p: Record<string, unknown>) => p.type === "text")
       .map((p: Record<string, unknown>) => String(p.text ?? ""))
       .join(" ") ?? "";
-    const isReview = looksLikeReview(latestUserText);
-    const ragData = isReview ? await fetchRagData(latestUserText) : null;
+    const isMedical = isMedicalQuery(latestUserText);
+    const ragData = isMedical ? await fetchRagData(latestUserText) : null;
     const ragContext = ragData ? formatRagContext(ragData) : null;
 
     const stream = createUIMessageStream({
