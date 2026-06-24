@@ -9,8 +9,8 @@ export const Greeting = () => {
         initial={{ opacity: 0, y: 10 }}
         transition={{ delay: 0.35, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       >
-          <span className="text-teal-600 dark:text-teal-400">Med</span>
-        <span>IQ</span>
+          <span className="text-sky-500 dark:text-sky-400">Medi</span>
+        <span className="text-indigo-500 dark:text-indigo-400">AGI</span>
       </motion.div>
       <motion.div
         animate={{ opacity: 1, y: 0 }}
