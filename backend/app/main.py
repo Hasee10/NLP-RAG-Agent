@@ -65,7 +65,7 @@ def ingest(req: IngestRequest):
 @app.post("/query", response_model=QueryResponse)
 async def query(req: QueryRequest):
     try:
-        result = await rag.answer(req.review, top_k=req.top_k)
+        result = await rag.answer(req.review, top_k=req.top_k, force_llm=req.force_llm)
         return QueryResponse(**result)
     except RuntimeError as e:
         raise HTTPException(status_code=400, detail=str(e))

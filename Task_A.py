@@ -27,8 +27,10 @@ FF_DIM      = 256
 NUM_LAYERS  = 3
 DROPOUT     = 0.1
 EPOCHS      = 15
-LR          = 1e-3
+LR          = 3e-4      # sane absolute peak LR (was 1e-3 × Noam ≈ 4e-6, far too small)
 WARMUP_STEPS = 500
+LAMBDA_CON   = 0.3      # weight on the supervised-contrastive term (classifier leads)
+CON_TEMP     = 0.1      # temperature for SupCon (lower = sharper separation)
 
 torch.manual_seed(42)
 np.random.seed(42)
@@ -183,6 +185,27 @@ def get_lr(step, embed_dim, warmup):
     return embed_dim ** (-0.5) * min(step ** (-0.5), step * warmup ** (-1.5))
 
 
+def supcon_loss(emb, labels, temperature):
+    """Supervised contrastive loss (Khosla et al. 2020) on L2-normalised
+    embeddings. Pulls same-sentiment reviews together and pushes different
+    sentiments apart, so cosine similarity becomes discriminative. Operates on
+    the *same* CLS vector used for retrieval — no extra parameters."""
+    z = F.normalize(emb, dim=1)
+    sim = (z @ z.t()) / temperature
+    sim = sim - sim.max(dim=1, keepdim=True).values.detach()  # numerical stability
+    B = z.size(0)
+    self_mask = torch.eye(B, dtype=torch.bool, device=z.device)
+    exp_sim = torch.exp(sim).masked_fill(self_mask, 0.0)
+    log_prob = sim - torch.log(exp_sim.sum(dim=1, keepdim=True) + 1e-12)
+    pos_mask = (labels.unsqueeze(0) == labels.unsqueeze(1)) & ~self_mask
+    pos_count = pos_mask.sum(dim=1)
+    pos_log_prob = (log_prob * pos_mask).sum(dim=1) / pos_count.clamp(min=1)
+    valid = pos_count > 0
+    if valid.sum() == 0:
+        return torch.zeros((), device=z.device)
+    return -pos_log_prob[valid].mean()
+
+
 def run_epoch(model, loader, optimizer, scheduler, criterion_s, criterion_l, training):
     model.train() if training else model.eval()
     total_loss = 0
@@ -193,10 +216,11 @@ def run_epoch(model, loader, optimizer, scheduler, criterion_s, criterion_l, tra
     with ctx:
         for ids, sent, length in loader:
             ids, sent, length = ids.to(DEVICE), sent.to(DEVICE), length.to(DEVICE)
-            s_logits, l_logits, _ = model(ids)
+            s_logits, l_logits, emb = model(ids)
             loss_s = criterion_s(s_logits, sent)
             loss_l = criterion_l(l_logits, length)
-            loss   = loss_s + 0.5 * loss_l
+            loss_c = supcon_loss(emb, sent, CON_TEMP)
+            loss   = loss_s + 0.5 * loss_l + LAMBDA_CON * loss_c
 
             if training:
                 optimizer.zero_grad()
@@ -247,8 +271,9 @@ def main():
     criterion_l = nn.CrossEntropyLoss()
 
     optimizer = torch.optim.Adam(model.parameters(), lr=LR, betas=(0.9, 0.98), eps=1e-9)
+    # Linear warmup to the full LR over WARMUP_STEPS, then hold constant.
     scheduler = torch.optim.lr_scheduler.LambdaLR(
-        optimizer, lr_lambda=lambda step: get_lr(step, EMBED_DIM, WARMUP_STEPS)
+        optimizer, lr_lambda=lambda step: min(1.0, step / WARMUP_STEPS)
     )
 
     history = {

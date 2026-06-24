@@ -24,6 +24,7 @@ class IngestResponse(BaseModel):
 class QueryRequest(BaseModel):
     review: str = Field(..., min_length=3, max_length=_MAX_REVIEW_LEN)
     top_k: int = Field(5, ge=1, le=20)
+    force_llm: bool = Field(False, description="Skip the from-scratch decoder and use the LLM directly")
 
 
 class RetrievedItem(BaseModel):
@@ -37,4 +38,5 @@ class QueryResponse(BaseModel):
     predicted_sentiment: str
     retrieved: list[RetrievedItem]
     explanation: str
+    generator: str = "decoder"   # "decoder" | "llm" | "rule-based"
     model: str

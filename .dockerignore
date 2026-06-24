@@ -9,7 +9,6 @@ venv/
 *.egg-info/
 
 # Heavy artifacts the query path does NOT need
-models/decoder_best.pt
 results/
 data/*.csv
 *.npy

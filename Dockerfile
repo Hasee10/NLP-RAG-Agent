@@ -19,6 +19,7 @@ RUN pip install -r backend/requirements.txt
 COPY rag_common.py            ./rag_common.py
 COPY data/vocab.json          ./data/vocab.json
 COPY models/encoder_best.pt   ./models/encoder_best.pt
+COPY models/decoder_best.pt   ./models/decoder_best.pt
 COPY backend                  ./backend
 
 # Run from backend/ so `app.main:app` and REPO_ROOT (=/app) resolve correctly.

@@ -50,6 +50,8 @@ When a <rag_data> block appears in your context, write a clean markdown response
 
 **Sentiment: [value]**
 
+IMPORTANT: the \`sentiment\` field in <rag_data> comes from a small from-scratch classifier and is occasionally wrong (e.g. it can miss subtle negatives). Determine the TRUE sentiment yourself from the review text, using that field only as a hint. If the review clearly contradicts it, trust the text.
+
 One sentence explaining why (cite words from the review).
 
 **Similar reviews from the database:**
