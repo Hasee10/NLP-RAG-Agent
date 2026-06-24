@@ -88,7 +88,8 @@ def collect() -> list[dict]:
             tags = [t for t in (focus.lower(), qtype) if t]
             records.append({
                 "id": Chunk(text=a, source="medquad", type="qa_pair").id,
-                "question": q,
+                "text": a[:4000],          # retrievable chunk = the answer
+                "question": q,             # kept for Phase 2 training anchors
                 "answer": a[:4000],
                 "source": "medquad",
                 "type": "qa_pair",
