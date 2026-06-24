@@ -46,6 +46,7 @@ import { type PostRequestBody, postRequestBodySchema } from "./schema";
 
 export const maxDuration = 60;
 
+// ── Medical RAG ──────────────────────────────────────────────────────────────
 type MedicalRagData = {
   answer: string;
   citations: string[];
@@ -57,10 +58,10 @@ type MedicalRagData = {
   sources_used: number;
 };
 
-async function fetchRagData(text: string): Promise<MedicalRagData | null> {
+async function fetchMedicalRag(text: string): Promise<MedicalRagData | null> {
   try {
-    const backendUrl = process.env.BACKEND_URL ?? "http://localhost:8000";
-    const res = await fetch(`${backendUrl}/query`, {
+    const url = process.env.MEDICAL_BACKEND_URL ?? process.env.BACKEND_URL ?? "http://localhost:8001";
+    const res = await fetch(`${url}/query`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ query: text.slice(0, 2000), top_k: 5 }),
@@ -73,7 +74,7 @@ async function fetchRagData(text: string): Promise<MedicalRagData | null> {
   }
 }
 
-function formatRagContext(data: MedicalRagData): string {
+function formatMedicalContext(data: MedicalRagData): string {
   const sources = (data.chunks ?? [])
     .map((c, i) => `  [${i + 1}] (${c.source ?? "unknown"} / ${c.type ?? ""}) "${c.text.slice(0, 200)}"`)
     .join("\n");
@@ -87,9 +88,63 @@ function formatRagContext(data: MedicalRagData): string {
   ].join("\n");
 }
 
+// ── Sentiment RAG ─────────────────────────────────────────────────────────────
+type SentimentRagData = {
+  predicted_sentiment: string;
+  explanation: string;
+  retrieved: { sentiment: string; similarity: number; text: string }[];
+};
+
+async function fetchSentimentRag(text: string): Promise<SentimentRagData | null> {
+  try {
+    const url = process.env.BACKEND_URL ?? "http://localhost:8000";
+    const res = await fetch(`${url}/query`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ review: text.slice(0, 5000), top_k: 5 }),
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+function formatSentimentContext(data: SentimentRagData): string {
+  const pct = (s: number) => `${(s * 100).toFixed(0)}%`;
+  const neighbors = (data.retrieved ?? [])
+    .map((r, i) => `  ${i + 1}. [${r.sentiment}] ${pct(r.similarity)} match — "${r.text.slice(0, 120)}"`)
+    .join("\n");
+  return [
+    `<sentiment_rag>`,
+    `sentiment: ${data.predicted_sentiment}`,
+    `neighbors:\n${neighbors}`,
+    `explanation: ${data.explanation}`,
+    `</sentiment_rag>`,
+  ].join("\n");
+}
+
+// ── Query routing ─────────────────────────────────────────────────────────────
+const MEDICAL_KW = [
+  "symptom", "disease", "diagnosis", "treatment", "medication", "drug", "dose",
+  "pain", "fever", "cancer", "diabetes", "heart", "blood", "lung", "kidney",
+  "brain", "nerve", "bone", "muscle", "skin", "allergy", "infection", "surgery",
+  "therapy", "vaccine", "vitamin", "diet", "exercise", "health", "medical",
+  "doctor", "hospital", "pharmacy", "prescription", "side effect", "cause",
+  "prevent", "cure", "chronic", "acute", "hypertension", "stroke", "asthma",
+];
+
 function isMedicalQuery(text: string): boolean {
+  const lower = text.toLowerCase();
+  return MEDICAL_KW.some((kw) => lower.includes(kw));
+}
+
+function looksLikeReview(text: string): boolean {
   const words = text.trim().split(/\s+/).length;
-  return words >= 3;
+  const isQuestion = text.trim().endsWith("?");
+  const startsWithQuestion = /^(how|what|why|when|where|explain|describe|tell|is |are |do |does )/i.test(text.trim());
+  return words >= 8 && !isQuestion && !startsWithQuestion && !isMedicalQuery(text);
 }
 
 function getStreamContext() {
@@ -237,14 +292,21 @@ export async function POST(request: Request) {
 
     const modelMessages = await convertToModelMessages(uiMessages);
 
-    // Pre-fetch medical RAG context for every user message
+    // Route query to medical RAG, sentiment RAG, or both in parallel
     const latestUserText = message?.parts
       ?.filter((p: Record<string, unknown>) => p.type === "text")
       .map((p: Record<string, unknown>) => String(p.text ?? ""))
       .join(" ") ?? "";
-    const isMedical = isMedicalQuery(latestUserText);
-    const ragData = isMedical ? await fetchRagData(latestUserText) : null;
-    const ragContext = ragData ? formatRagContext(ragData) : null;
+
+    const [medicalData, sentimentData] = await Promise.all([
+      isMedicalQuery(latestUserText) ? fetchMedicalRag(latestUserText) : Promise.resolve(null),
+      looksLikeReview(latestUserText) ? fetchSentimentRag(latestUserText) : Promise.resolve(null),
+    ]);
+
+    const contextParts: string[] = [];
+    if (medicalData) contextParts.push(formatMedicalContext(medicalData));
+    if (sentimentData) contextParts.push(formatSentimentContext(sentimentData));
+    const ragContext = contextParts.length > 0 ? contextParts.join("\n\n") : null;
 
     const stream = createUIMessageStream({
       originalMessages: isToolApprovalFlow ? uiMessages : undefined,
@@ -359,15 +421,17 @@ export async function POST(request: Request) {
           return "AI Gateway requires a valid credit card on file to service requests.";
         }
         // LLM unavailable — surface the RAG backend result directly
-        if (ragData) {
-          const lines = [
+        if (medicalData) {
+          return [
             `*(LLM temporarily unavailable — showing raw RAG result)*`,
             ``,
-            ragData.answer,
+            medicalData.answer,
             ``,
-            `*${ragData.disclaimer}*`,
-          ];
-          return lines.join("\n");
+            `*${medicalData.disclaimer}*`,
+          ].join("\n");
+        }
+        if (sentimentData) {
+          return `*(LLM temporarily unavailable)*\n\nSentiment: **${sentimentData.predicted_sentiment}**\n\n${sentimentData.explanation}`;
         }
         return "The AI model is temporarily unavailable. Please try again in a moment, or switch to a different model using the selector above.";
       },
