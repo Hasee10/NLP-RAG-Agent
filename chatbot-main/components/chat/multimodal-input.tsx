@@ -522,10 +522,7 @@ function PureMultimodalInput({
               selectedModelId={selectedModelId}
               status={status}
             />
-            <ModelSelectorCompact
-              onModelChange={onModelChange}
-              selectedModelId={selectedModelId}
-            />
+            {/* Model selector hidden from UI — DEFAULT_CHAT_MODEL used always */}
           </PromptInputTools>
 
           {status === "submitted" ? (

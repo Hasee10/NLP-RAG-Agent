@@ -39,6 +39,10 @@ SYSTEM_KW = {
     "reproductive": ["pregnan", "ovar", "uterus", "prostate", "menstru"],
     "integumentary": ["skin", "rash", "dermat", "eczema"],
     "immune": ["immune", "hiv", "lupus", "allergy", "autoimmune"],
+    "oral": ["tooth", "teeth", "gum", "dental", "cavity", "caries", "periodon",
+             "orthodon", "enamel", "pulp", "root canal", "plaque", "tartar",
+             "gingivit", "toothache", "molar", "incisor", "jaw", "oral health",
+             "dentist", "braces", "crown", "filling", "extraction"],
 }
 
 _model: SentenceTransformer | None = None
