@@ -21,7 +21,8 @@ from pydantic import BaseModel
 
 ROOT = Path(__file__).resolve().parents[0]
 sys.path.insert(0, str(ROOT))
-load_dotenv(ROOT / ".env")
+load_dotenv(ROOT / ".env", override=False)
+load_dotenv(ROOT.parent / ".env", override=False)
 
 from retrieve import classify_query, retrieve  # noqa: E402
 from generate import generate_answer, DISCLAIMER  # noqa: E402

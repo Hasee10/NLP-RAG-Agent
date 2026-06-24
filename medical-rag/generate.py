@@ -1,12 +1,6 @@
-"""Phase 6 — grounded, cited, disclaimered answer generation (Groq).
+"""Phase 6 — grounded, cited, disclaimered answer generation (OpenRouter/Groq).
 
-Takes a query + retrieved chunks and returns a structured response:
-    {
-        "answer":    str,   # grounded in retrieved sources
-        "citations": [...], # chunk ids referenced
-        "disclaimer": str,  # always included
-        "model":     str,
-    }
+Uses OPENROUTER_API_KEY + OPENROUTER_BASE_URL from .env (OpenAI-compatible).
 
 Usage:
     python -m medical-rag.generate "What causes high blood pressure?"
@@ -19,11 +13,12 @@ import sys
 from pathlib import Path
 
 from dotenv import load_dotenv
-from groq import AsyncGroq
+from openai import AsyncOpenAI
 
 ROOT = Path(__file__).resolve().parents[0]
 sys.path.insert(0, str(ROOT))
-load_dotenv(ROOT / ".env")
+load_dotenv(ROOT / ".env", override=False)
+load_dotenv(ROOT.parent / ".env", override=False)
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 log = logging.getLogger("generate")
@@ -45,7 +40,15 @@ Rules:
 6. Always end with a brief summary sentence.
 """
 
-MODEL = "llama-3.3-70b-versatile"
+
+def _get_client() -> AsyncOpenAI:
+    api_key = os.environ.get("OPENROUTER_API_KEY") or os.environ.get("GROQ_API_KEY")
+    base_url = os.environ.get("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1")
+    return AsyncOpenAI(api_key=api_key, base_url=base_url)
+
+
+def _get_model() -> str:
+    return os.environ.get("OPENROUTER_MODEL", "openrouter/auto")
 
 
 def _format_sources(chunks: list[dict]) -> str:
@@ -59,13 +62,14 @@ def _format_sources(chunks: list[dict]) -> str:
 
 
 async def generate_answer(query: str, chunks: list[dict]) -> dict:
-    client = AsyncGroq(api_key=os.environ["GROQ_API_KEY"])
+    client = _get_client()
+    model = _get_model()
 
     sources_text = _format_sources(chunks)
     user_msg = f"Question: {query}\n\n<sources>\n{sources_text}\n</sources>"
 
     resp = await client.chat.completions.create(
-        model=MODEL,
+        model=model,
         messages=[
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": user_msg},
@@ -81,7 +85,7 @@ async def generate_answer(query: str, chunks: list[dict]) -> dict:
         "answer": answer,
         "citations": citation_ids,
         "disclaimer": DISCLAIMER,
-        "model": MODEL,
+        "model": model,
         "sources_used": len(chunks),
     }
 
@@ -95,7 +99,7 @@ def main():
     log.info("retrieved %d chunks", len(chunks))
 
     result = asyncio.run(generate_answer(query, chunks))
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print(result["answer"])
     print("\n" + result["disclaimer"])
     print(f"\n[model: {result['model']}]")

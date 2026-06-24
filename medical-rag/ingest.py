@@ -30,7 +30,8 @@ from supabase import create_client
 
 ROOT = Path(__file__).resolve().parents[0]
 sys.path.insert(0, str(ROOT))
-load_dotenv(ROOT / ".env")
+load_dotenv(ROOT / ".env", override=False)
+load_dotenv(ROOT.parent / ".env", override=False)  # fallback to project root
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 log = logging.getLogger("ingest")
