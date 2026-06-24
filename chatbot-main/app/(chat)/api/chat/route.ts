@@ -60,8 +60,9 @@ type MedicalRagData = {
 
 async function fetchMedicalRag(text: string): Promise<MedicalRagData | null> {
   try {
-    const url = process.env.MEDICAL_BACKEND_URL ?? process.env.BACKEND_URL ?? "http://localhost:8001";
-    const res = await fetch(`${url}/query`, {
+    // Medical RAG lives on the same HF Space as sentiment, just a different endpoint
+    const url = process.env.BACKEND_URL ?? "http://localhost:8000";
+    const res = await fetch(`${url}/medical-query`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ query: text.slice(0, 2000), top_k: 5 }),

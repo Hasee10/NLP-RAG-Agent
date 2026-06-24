@@ -13,9 +13,10 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from .config import get_settings
-from . import db, rag
+from . import db, rag, medical
 from .schemas import (
     IngestRequest, IngestResponse, QueryRequest, QueryResponse,
+    MedicalQueryRequest, MedicalQueryResponse,
 )
 
 logger = logging.getLogger(__name__)
@@ -72,3 +73,13 @@ async def query(req: QueryRequest):
     except Exception:
         logger.exception("query: pipeline error")
         raise HTTPException(status_code=502, detail="Query failed")
+
+
+@app.post("/medical-query", response_model=MedicalQueryResponse)
+async def medical_query(req: MedicalQueryRequest):
+    try:
+        result = await medical.answer(req.query, top_k=req.top_k)
+        return MedicalQueryResponse(**result)
+    except Exception:
+        logger.exception("medical-query: pipeline error")
+        raise HTTPException(status_code=502, detail="Medical query failed")

@@ -40,3 +40,29 @@ class QueryResponse(BaseModel):
     explanation: str
     generator: str = "decoder"   # "decoder" | "llm" | "rule-based"
     model: str
+
+
+# ── Medical RAG ───────────────────────────────────────────────────────────────
+
+class MedicalQueryRequest(BaseModel):
+    query: str = Field(..., min_length=3, max_length=2000)
+    top_k: int = Field(5, ge=1, le=20)
+
+
+class MedicalChunk(BaseModel):
+    text: str
+    source: str | None = None
+    type: str | None = None
+    body_system: str | None = None
+    similarity: float | None = None
+
+
+class MedicalQueryResponse(BaseModel):
+    answer: str
+    citations: list[str]
+    disclaimer: str
+    chunks: list[MedicalChunk]
+    model: str
+    body_system: str | None
+    chunk_type: str | None
+    sources_used: int
