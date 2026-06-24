@@ -24,7 +24,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 log = logging.getLogger("generate")
 
 DISCLAIMER = (
-    "⚠️ This information is for educational purposes only and does not constitute "
+    "[!] This information is for educational purposes only and does not constitute "
     "medical advice, diagnosis, or treatment. Always consult a licensed healthcare "
     "professional for personal medical decisions."
 )

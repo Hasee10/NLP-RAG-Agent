@@ -76,7 +76,12 @@ def _get_sb():
 
 
 def classify_query(query: str) -> tuple[str | None, str | None]:
-    """Return (body_system, chunk_type) filters, or None if no strong signal."""
+    """Return (body_system, chunk_type) filters, or None if no strong signal.
+
+    Type filtering is intentionally disabled for MVP: qa_pair covers most medical
+    questions, and strict type filters (e.g. 'symptom') exclude qa_pair answers
+    that also discuss symptoms. Body-system filter + semantic re-ranking is enough.
+    """
     q = query.lower()
     body_system = None
     for system, kws in SYSTEM_KW.items():
@@ -84,16 +89,7 @@ def classify_query(query: str) -> tuple[str | None, str | None]:
             body_system = system
             break
 
-    chunk_type = None
-    for ctype, kws in TYPE_KW.items():
-        if any(k in q for k in kws):
-            chunk_type = ctype
-            break
-    # qa_pair is the catch-all for general questions
-    if chunk_type is None and re.search(r"\b(what|how|why|when|is|are|can|does|do)\b", q):
-        chunk_type = "qa_pair"
-
-    return body_system, chunk_type
+    return body_system, None
 
 
 def _content_words(text: str) -> set[str]:
